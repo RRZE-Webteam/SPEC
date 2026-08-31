@@ -1,4 +1,4 @@
-# Zentrale Einbindung der RRZE-Plugin-Spezifikation in LLM-Werkzeuge
+# Empfehlungen zur Einbindung der RRZE-Plugin-Spezifikation in LLM-Werkzeuge
 
 ( Version: 1.2,  Date: 31.08.2026,  Source: https://github.com/RRZE-Webteam/SPEC/RRZE-Doc-LLM-Settings.md )
 
