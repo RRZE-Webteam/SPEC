@@ -1,96 +1,182 @@
-# FAU Crawler User-Agent Specification --- LLM/Agent Project Rules
+# FAU-Crawler: Kennzeichnung und Regeln für den schonenden Abruf von Websites
 
-**Specification version:** 1.5\
-**Scope:** All software that performs automated HTTP retrieval or
-crawling on behalf of an FAU organizational unit, project or service.
+**Version:** 1.0\
+**Stand:** 31.08.2026
+**Abgeleitet aus:** FAU Crawler User-Agent Specification --- LLM/Agent
+Project Rules, Version 1.5
 
-This file is intended to be consumed as a normative project instruction
-by LLMs, coding agents and automated development systems.
+## Kurzbeschreibung
 
-## 1. Normative requirement
+Automatisierte Crawler, Bots und Scraper, die im Verantwortungsbereich
+einer Einrichtung oder eines Projekts der FAU betrieben werden, sollen
+sich gegenüber Webservern eindeutig zu erkennen geben und Websites
+möglichst schonend und effizient abrufen.
 
-Any crawler covered by this specification **MUST** identify itself using
-this HTTP `User-Agent` schema:
+Dafür wird ein einheitlicher HTTP-User-Agent verwendet:
 
 ``` text
 FAU-<ORG>-<BOT>/<VERSION> (+<INFO-URL>;mailto:<CONTACT>)
 ```
 
-Preferred version syntax:
+Beispiel:
 
 ``` text
-FAU-<ORG>-<BOT>/<MAJOR.MINOR> (+<INFO-URL>;mailto:<CONTACT>)
+FAU-RRZE-Legalcheck/1.0 (+https://www.rrze.fau.de/bots/legalcheck/;mailto:webmaster@fau.de)
 ```
 
-Canonical example:
+Die wichtigsten Regeln sind:
 
-``` http
-User-Agent: FAU-RRZE-Legalcheck/1.0 (+https://www.rrze.fau.de/bots/legalcheck/;mailto:webmaster@fau.de)
+-   Jeder Crawler soll über seinen User-Agent einer FAU-Einrichtung und
+    einem konkreten Bot zugeordnet werden können.
+-   Der User-Agent enthält eine Versionsnummer, eine Informationsseite
+    und eine erreichbare Kontaktadresse.
+-   `robots.txt` muss vor einem systematischen Crawl berücksichtigt
+    werden. Dort angegebene Sitemaps sollen bevorzugt für die Ermittlung
+    der vorhandenen URLs verwendet werden.
+-   Für die Ermittlung und den Abruf von Inhalten gilt grundsätzlich die
+    Reihenfolge: `robots.txt` → Sitemap → `llms.txt`/`llms-full.txt` →
+    API bzw. strukturierte Daten → regulärer HTML-Crawl.
+-   Verweist eine HTML-Seite über Metadaten oder `rel`-Links auf eine
+    geeignete JSON-, REST- oder andere maschinenlesbare Repräsentation,
+    soll diese nach Möglichkeit genutzt werden.
+-   Ein Crawler darf pro Origin/Host höchstens **3 Requests pro
+    Sekunde** starten. Das Limit gilt insgesamt und nicht jeweils
+    getrennt für parallele Prozesse oder Worker.
+-   Serverantworten wie `429 Too Many Requests`,
+    `503 Service Unavailable` und `Retry-After` müssen berücksichtigt
+    werden.
+-   Crawler sollen grundsätzlich ohne dauerhaften Sitzungszustand und
+    ohne Cookies arbeiten. Technisch notwendige Cookies sind zulässig;
+    Tracking-, Werbe-, Analytics-, Personalisierungs- oder
+    Consent-Cookies sollen nicht verwendet werden.
+-   Der User-Agent ist nur eine Selbstauskunft und keine
+    Authentisierung. Ein `FAU-`-User-Agent darf daher niemals allein
+    besondere Zugriffsrechte erhalten.
+
+Die folgenden Abschnitte erläutern diese Regeln genauer.
+
+## 1. Geltungsbereich und Ziel
+
+Die Vorgabe richtet sich an automatisierte Systeme, die Websites oder
+Webressourcen im Verantwortungsbereich einer FAU-Einrichtung, eines
+FAU-Projekts oder eines entsprechenden Dienstes abrufen.
+
+Dazu zählen beispielsweise:
+
+-   Suchmaschinen-Crawler,
+-   Forschungs-Crawler,
+-   Link- und Qualitätsprüfungen,
+-   Accessibility- und Compliance-Prüfungen,
+-   Crawler für KI- und RAG-Systeme,
+-   Bots zur Erfassung von Metadaten,
+-   Scraper für definierte wissenschaftliche oder administrative Zwecke.
+
+Ziel ist nicht, eine bestimmte Crawler-Software vorzuschreiben. Die
+Vorgabe definiert vielmehr, wie sich ein solcher Dienst gegenüber
+fremden Webservern identifiziert und wie er sich beim Abruf verhalten
+soll.
+
+Websitebetreiber sollen anhand ihrer Server-Logs erkennen können,
+welcher FAU-Dienst einen Abruf durchgeführt hat, wer dafür
+verantwortlich ist und wie der Betreiber bei Problemen Kontakt aufnehmen
+kann.
+
+## 2. Aufbau des User-Agents
+
+Das vorgesehene Schema lautet:
+
+``` text
+FAU-<ORG>-<BOT>/<VERSION> (+<INFO-URL>;mailto:<CONTACT>)
 ```
 
-The syntax above is canonical. New implementations **SHOULD** generate
-the separator exactly as `;mailto:` without whitespace.
+Ein vollständiges Beispiel ist:
 
-For compatibility with earlier implementations, the form `; mailto:`
-with a single space after the semicolon is also valid. Parsers and
-validators **MUST NOT** reject an otherwise valid FAU crawler User-Agent
-solely because it uses this legacy-compatible whitespace form.
+``` text
+FAU-RRZE-Legalcheck/1.0 (+https://www.rrze.fau.de/bots/legalcheck/;mailto:webmaster@fau.de)
+```
 
-Generators **SHOULD** emit the canonical `;mailto:` form.
+Die einzelnen Bestandteile haben unterschiedliche Aufgaben.
 
-## 2. Field requirements
+### 2.1 `FAU`
 
-### `FAU`
+`FAU` ist das feste Präfix.
 
--   **MUST** be exactly `FAU`.
--   **MUST** be the first component.
--   **MUST NOT** be used for systems that are not operated under
-    responsibility of an FAU organizational unit or FAU project.
--   **MUST NOT** be interpreted as authentication.
+Es zeigt an, dass der Crawler im Verantwortungsbereich einer
+Organisationseinheit oder eines Projekts der
+Friedrich-Alexander-Universität Erlangen-Nürnberg betrieben wird.
 
-### `<ORG>`
+Das Präfix darf nicht für private oder externe Systeme verwendet werden,
+die nicht unter entsprechender Verantwortung der FAU stehen.
 
--   **MUST** identify the responsible FAU organizational unit.
--   **SHOULD** use an established organizational abbreviation.
--   **MUST NOT** contain whitespace.
--   **SHOULD** match `[A-Za-z0-9_-]+`.
--   **SHOULD** remain stable for the lifetime of the crawler.
+Wichtig ist dabei: Das Präfix beweist die Herkunft nicht. Jeder
+beliebige Client kann technisch einen User-Agent senden, der mit `FAU-`
+beginnt.
 
-Example:
+### 2.2 `<ORG>` -- verantwortliche Organisation
+
+`ORG` bezeichnet die verantwortliche FAU-Einrichtung oder
+Organisationseinheit.
+
+Beispiele:
 
 ``` text
 RRZE
+UB
+TF
+INF12
 ```
 
-### `<BOT>`
+Wenn bereits eine etablierte Kurzbezeichnung vorhanden ist, sollte diese
+verwendet werden.
 
--   **MUST** uniquely identify the crawler/service within the
-    responsible organization.
--   **MUST NOT** contain whitespace.
--   **SHOULD** match `[A-Za-z0-9_-]+`.
--   **SHOULD** remain stable across releases.
--   **MAY** use generic functional identifiers such as `Bot`, `Crawler`
-    or `Scraper` as the complete bot name.
--   **SHOULD NOT** use identifiers that merely name the implementation
-    technology, programming language, runtime, HTTP client library or
-    generic retrieval tool, such as `Python`, `PHP`, `Java`, `curl`,
-    `wget`, `python-requests` or `Guzzle`, as the complete bot name.
+Die Bezeichnung sollte stabil bleiben und keine Leerzeichen enthalten.
+Zulässig bzw. vorgesehen sind insbesondere Buchstaben, Ziffern,
+Bindestrich und Unterstrich.
 
-Example:
+### 2.3 `<BOT>` -- Name des Crawlers
+
+`BOT` benennt den eigentlichen Crawler.
+
+Beispiele könnten sein:
 
 ``` text
 Legalcheck
+SearchBot
+ResearchCrawler
+Scraper
 ```
 
-### `<VERSION>`
+Auch allgemeine funktionale Namen wie `Bot`, `Crawler` oder `Scraper`
+sind zulässig.
 
--   **MUST** be present.
--   **MUST** be numeric and dot-separated.
--   **SHOULD** contain at least `MAJOR.MINOR`.
--   **MAY** contain additional numeric components.
--   **SHOULD** change when crawler behavior changes materially.
+Nicht sinnvoll sind dagegen Bezeichnungen, die lediglich die verwendete
+Technik nennen. Ein Bot sollte beispielsweise nicht einfach so heißen:
 
-Valid examples:
+``` text
+Python
+PHP
+Java
+curl
+wget
+python-requests
+Guzzle
+```
+
+Der User-Agent soll schließlich den Dienst identifizieren und nicht
+lediglich verraten, mit welcher Programmiersprache oder Bibliothek er
+implementiert wurde.
+
+### 2.4 `<VERSION>` -- Versionsnummer
+
+Jeder Crawler gibt eine Versionsnummer an.
+
+Empfohlen ist mindestens das Schema:
+
+``` text
+MAJOR.MINOR
+```
+
+Beispielsweise:
 
 ``` text
 1.0
@@ -99,409 +185,384 @@ Valid examples:
 2.3.1
 ```
 
-### `<INFO-URL>`
+Die Versionsnummer bezieht sich auf den Crawler und dessen Verhalten.
+Sie ist nicht die Versionsnummer von PHP, Python, curl oder einer
+verwendeten HTTP-Bibliothek.
 
--   **SHOULD** be present for production crawlers.
--   **SHOULD** use HTTPS.
--   **SHOULD** be a stable public URL.
--   The target page **SHOULD** identify the crawler, responsible
-    organization, purpose, contact information and crawl behavior.
--   The target page **SHOULD** document relevant rate limits and source
-    networks where appropriate.
+Ändert sich das Crawl-Verhalten wesentlich, sollte auch die
+Versionsnummer angepasst werden.
 
-### `<CONTACT>`
+### 2.5 `<INFO-URL>` -- Informationsseite
 
--   **MUST** be present.
--   **MUST** be represented as `mailto:<address>`.
--   **MUST** be a monitored contact address.
--   **SHOULD** be a functional/team mailbox rather than a personal
-    mailbox.
+Produktiv eingesetzte Crawler sollten eine dauerhaft erreichbare
+HTTPS-Seite angeben.
 
-## 3. Construction algorithm
-
-When implementing a crawler:
-
-1.  Determine the responsible FAU organization abbreviation as `ORG`.
-2.  Choose a stable and unique crawler name as `BOT`.
-3.  Set the crawler implementation/behavior version as `VERSION`.
-4.  Set a stable HTTPS documentation URL as `INFO-URL`.
-5.  Set a monitored contact mailbox as `CONTACT`.
-6.  Construct exactly:
+Beispiel:
 
 ``` text
-FAU-{ORG}-{BOT}/{VERSION} (+{INFO-URL};mailto:{CONTACT})
+https://www.rrze.fau.de/bots/legalcheck/
 ```
 
-7.  Configure the HTTP client to send this value in the `User-Agent`
-    header for every crawler request.
-8.  Verify that the HTTP library does not replace it with its default
-    User-Agent.
+Dort sollten insbesondere Informationen zu folgenden Punkten zu finden
+sein:
 
-## 4. Request behavior
+-   Name und Zweck des Crawlers,
+-   verantwortliche FAU-Einrichtung,
+-   Kontaktmöglichkeit,
+-   typisches Crawl-Verhalten,
+-   gegebenenfalls verwendete Quellnetze oder IP-Adressen,
+-   gegebenenfalls besondere Rate-Limits oder technische Hinweise.
 
-The specified User-Agent **SHOULD** be sent for all crawler-originated
-HTTP requests, including:
+Die Informationsseite ermöglicht es einem Websitebetreiber, einen
+unbekannten Zugriff aus seinem Server-Log schnell einzuordnen.
 
--   HTML pages,
--   WordPress REST API requests,
--   other HTTP APIs,
--   XML sitemaps,
--   RSS/Atom feeds,
--   media/files,
--   requests following redirects.
+### 2.6 `<CONTACT>` -- Kontaktadresse
 
-Do **NOT** intentionally switch to browser impersonation such as
-`Mozilla/5.0` to conceal crawler identity.
-
-## 5. Crawl Discovery and Politeness
-
-### 5.1 robots.txt
-
-Before systematic crawling of an origin, the crawler **MUST** retrieve
-and evaluate the applicable `robots.txt`.
-
-The crawler:
-
--   **MUST** respect applicable `User-agent`, `Allow`, and `Disallow`
-    directives unless an explicitly authorized and documented exception
-    exists for the concrete deployment.
--   **MUST NOT** treat FAU affiliation as an implicit exemption from
-    `robots.txt`.
--   **SHOULD** cache `robots.txt` for a reasonable period instead of
-    retrieving it before every request.
--   **MUST** re-evaluate applicable rules when a refreshed `robots.txt`
-    is retrieved.
-
-The stable crawler product identifier is:
+Zusätzlich wird eine funktionierende Mailadresse angegeben:
 
 ``` text
-FAU-<ORG>-<BOT>
+mailto:webmaster@fau.de
 ```
 
-Example `robots.txt` targeting:
+Eine Funktionsadresse ist gegenüber einer persönlichen Adresse zu
+bevorzugen. Dadurch bleibt die Kontaktmöglichkeit auch bei Urlaub,
+Stellenwechsel oder organisatorischen Veränderungen bestehen.
+
+## 3. Schreibweise von `;mailto:`
+
+Die aktuelle kanonische Schreibweise lautet ohne Leerzeichen:
+
+``` text
+;mailto:
+```
+
+Damit ergibt sich beispielsweise:
+
+``` text
+FAU-RRZE-Legalcheck/1.0 (+https://www.rrze.fau.de/bots/legalcheck/;mailto:webmaster@fau.de)
+```
+
+Neue Crawler sollen diese Form erzeugen.
+
+Aus Kompatibilitätsgründen bleibt jedoch auch die ältere Schreibweise
+mit einem Leerzeichen gültig:
+
+``` text
+FAU-RRZE-Legalcheck/1.0 (+https://www.rrze.fau.de/bots/legalcheck/; mailto:webmaster@fau.de)
+```
+
+Ein Parser oder Validator darf einen ansonsten korrekten FAU-User-Agent
+nicht allein wegen dieses Leerzeichens als ungültig behandeln.
+
+Damit gilt:
+
+-   `;mailto:` ist die bevorzugte und kanonische Form.
+-   `; mailto:` ist eine gültige Kompatibilitätsform.
+
+## 4. `robots.txt` zuerst berücksichtigen
+
+Vor einem systematischen Crawl muss der Crawler die für den Server
+geltende `robots.txt` berücksichtigen.
+
+Typischerweise befindet sie sich unter:
+
+``` text
+/robots.txt
+```
+
+Darin können Websitebetreiber unter anderem festlegen, welche Bereiche
+von bestimmten Crawlern abgerufen werden dürfen.
+
+Beispiel:
 
 ``` text
 User-agent: FAU-RRZE-Legalcheck
 Disallow: /intern/
 ```
 
-`ORG` and `BOT` **MUST NOT** be randomly altered between requests or
-executions.
+Die Zugehörigkeit eines Crawlers zur FAU stellt grundsätzlich keine
+Ausnahme von diesen Regeln dar.
 
-### 5.2 Sitemap discovery
+Ein Crawler sollte die `robots.txt` für eine angemessene Zeit
+zwischenspeichern. Es wäre unnötig und kontraproduktiv, sie vor jedem
+einzelnen Seitenabruf erneut herunterzuladen.
 
-The crawler **SHOULD** inspect `Sitemap:` directives declared in
-`robots.txt`.
+## 5. Sitemaps verwenden
 
-If one or more sitemaps are declared:
+Die `robots.txt` kann zusätzlich auf eine oder mehrere XML-Sitemaps
+verweisen.
 
--   the crawler **SHOULD** use them as the preferred source for URL
-    discovery;
--   the crawler **SHOULD** avoid unnecessary recursive link discovery
-    when the sitemap already provides the required URL inventory;
--   the crawler **SHOULD** support sitemap index files and recursively
-    process referenced sitemap files;
--   URLs discovered through a sitemap **MUST** remain subject to
-    applicable `robots.txt` rules.
+Ein Crawler sollte diese Angaben berücksichtigen und vorhandene Sitemaps
+bevorzugt für die Ermittlung der URLs einer Website verwenden.
 
-A sitemap declaration does **NOT** imply permission to retrieve a URL
-that is otherwise disallowed for the crawler.
+Das ist effizienter und serverfreundlicher als der Versuch, die gesamte
+Website ausschließlich durch rekursives Verfolgen aller Links zu
+erschließen.
 
-### 5.3 Machine-readable site metadata and AI discovery
+Auch Sitemap-Indexdateien, die auf weitere Sitemaps verweisen, sollten
+unterstützt werden.
 
-Before or during systematic crawling, the crawler **SHOULD** check for
-machine-readable site metadata and content representations relevant to
-discovery or efficient content retrieval.
+Eine URL wird allerdings nicht dadurch automatisch zum erlaubten
+Crawl-Ziel, dass sie in einer Sitemap steht. Die für den Crawler
+geltenden Zugriffsbeschränkungen bleiben bestehen.
 
-The preferred discovery and retrieval order is:
+## 6. Bevorzugte Reihenfolge bei der Content-Discovery
 
-1.  `/robots.txt`
-2.  sitemaps and sitemap indexes declared by `robots.txt`
-3.  `/llms.txt` and, where referenced or available, `/llms-full.txt`
-4.  suitable APIs or explicitly provided structured machine-readable
-    content representations
-5.  regular HTML crawling
+Ein Crawler sollte vorhandene maschinenlesbare Informationen nutzen,
+bevor er eine Website unnötig aufwendig über HTML analysiert.
 
-This order expresses a preference for efficient discovery and retrieval.
-It does **NOT** override access restrictions or crawler policies.
+Die bevorzugte Reihenfolge lautet:
 
-The crawler:
+1.  `robots.txt`
+2.  dort deklarierte Sitemaps und Sitemap-Indizes
+3.  `llms.txt` bzw. `llms-full.txt`
+4.  geeignete APIs oder andere strukturierte maschinenlesbare
+    Repräsentationen
+5.  regulärer HTML-Crawl
 
--   **MUST** treat applicable `robots.txt` rules, HTTP access controls,
-    authentication requirements and target-specific rate limits as
-    authoritative constraints.
--   **MUST NOT** interpret `/llms.txt`, `/llms-full.txt`, an API, a
-    sitemap or another metadata resource as permission to bypass an
-    applicable restriction.
--   **SHOULD** use `/llms.txt` as an AI-oriented discovery and guidance
-    resource when available and relevant.
--   **MAY** use `/llms-full.txt` when it is referenced, available and
-    useful for the crawler's purpose.
--   **MUST NOT** assume that `llms.txt` or `llms-full.txt` is
-    universally supported or authoritative; their absence **MUST NOT**
-    be treated as an error.
--   **SHOULD** prefer an explicitly offered API or structured
-    machine-readable representation when it provides the required
-    content with less redundant retrieval than HTML crawling.
--   **SHOULD** avoid downloading and parsing redundant HTML pages when
-    an appropriate machine-readable representation already provides the
-    content required for the crawler's task.
--   **MUST** apply the same per-origin/host request-rate limits to
-    metadata, sitemap, API, structured-content and HTML requests.
+Diese Reihenfolge ist eine Effizienzregel und keine Berechtigungsregel.
 
-#### HTML-advertised machine-readable representations
+Zugriffsschutz, Authentisierung, `robots.txt` und strengere Vorgaben
+eines Servers haben immer Vorrang.
 
-When an HTML document has been retrieved, the crawler **SHOULD** inspect
-its document metadata for links to alternative or machine-readable
-representations of the same resource.
+## 7. `llms.txt` und `llms-full.txt`
 
-This includes, where applicable:
+Websites können Informationen speziell für KI-Systeme und LLM-basierte
+Dienste über Dateien wie
 
--   HTML `<link>` elements such as `rel="alternate"` that advertise
-    JSON, API or other structured representations;
--   CMS-specific discovery links to REST APIs or JSON representations;
--   WordPress REST API discovery information exposed in HTML metadata;
--   other explicitly linked machine-readable representations whose media
-    type or relation indicates that they represent the current resource.
-
-When such a representation is available:
-
--   the crawler **SHOULD** use it when it provides the content and
-    metadata required for the crawler's task more directly or
-    efficiently than parsing the HTML representation;
--   the crawler **SHOULD** avoid redundant retrieval or processing of
-    equivalent HTML content once a suitable structured representation
-    has been obtained;
--   the crawler **MUST NOT** assume that every advertised API or JSON
-    endpoint contains a complete representation of the HTML resource;
--   the crawler **SHOULD** verify that the structured representation
-    contains the information required for its task before treating it as
-    a replacement for HTML processing;
--   the linked resource **MUST** remain subject to applicable
-    `robots.txt` rules, HTTP access controls, authentication
-    requirements and per-origin/host request-rate limits.
-
-HTML metadata discovery is a mechanism for locating a preferred
-machine-readable representation after an HTML document has been
-encountered. It does **NOT** change the general preference for an
-already-known API or structured representation over HTML crawling.
-
-### 5.4 `.well-known` resources
-
-The crawler **MAY** use explicitly supported and relevant resources
-below `/.well-known/` when required for its defined purpose.
-
-The crawler:
-
--   **MUST NOT** enumerate `/.well-known/` indiscriminately.
--   **MUST NOT** recursively crawl the `/.well-known/` namespace.
--   **MUST NOT** request arbitrary `/.well-known/` resource names merely
-    to test for their existence.
--   **SHOULD** request a `/.well-known/` resource only when the crawler
-    explicitly supports the corresponding specification or when the
-    resource has been referenced by another authoritative site resource.
--   **MUST** continue to apply applicable `robots.txt`, HTTP
-    access-control and rate-limit rules to such requests.
-
-The existence of the `/.well-known/` namespace does not by itself
-indicate that it contains content relevant to crawling or AI processing.
-
-### 5.5 Request rate
-
-A crawler **MUST** limit its request rate independently for each target
-origin/host.
-
-Unless a lower target-specific limit applies:
-
--   the crawler **MUST NOT** initiate more than **3 requests per second
-    per origin/host**;
--   this limit **MUST** apply to the crawler as a whole, including all
-    concurrent workers, threads, processes and asynchronous requests;
--   parallelization **MUST NOT** be used to circumvent the
-    per-origin/host limit;
--   the crawler **MAY** use a lower request rate;
--   a rate above 3 requests per second **MUST** require explicit
-    configuration and authorization for the affected target service.
-
-Implementations **SHOULD** use a shared per-origin/host rate limiter
-when concurrency is used.
-
-### 5.6 Server overload and backoff
-
-The crawler **MUST** react to server-side rate limiting and temporary
-unavailability.
-
--   A `Retry-After` response header **MUST** be respected when present.
--   On HTTP `429 Too Many Requests`, the crawler **MUST** reduce or
-    suspend requests to the affected origin/host and **SHOULD** apply
-    exponential backoff.
--   On HTTP `503 Service Unavailable`, the crawler **MUST** avoid
-    immediate aggressive retries and **SHOULD** apply exponential
-    backoff.
--   A target-specific restriction that is stricter than the FAU default
-    **MUST** take precedence.
--   Retry logic **MUST NOT** cause the effective request rate to exceed
-    the configured per-origin/host limit.
-
-## 6. Cookies, Sessions and Client State
-
-Crawler implementations **SHOULD** be stateless by default.
-
-The crawler:
-
--   **SHOULD NOT** persist or return cookies unless they are technically
-    required for the explicitly defined crawling purpose.
--   **SHOULD NOT** store or return cookies whose purpose is tracking,
-    analytics, advertising, personalization or consent management.
--   **SHOULD NOT** interact with cookie-consent dialogs intended for
-    human users.
--   **SHOULD NOT** signal consent to optional tracking, analytics,
-    advertising or personalization solely to obtain or crawl content.
--   **MUST NOT** use cookies or session state to bypass authentication
-    requirements, access restrictions, paywalls, crawler restrictions,
-    security controls or anti-bot protections.
--   **MAY** use technically required cookies when they are necessary for
-    the explicitly authorized crawling function.
--   **SHOULD** scope technically required cookies to the relevant origin
-    and session.
--   **SHOULD** retain technically required cookies only for as long as
-    necessary for the crawling operation.
--   **MUST NOT** transfer cookies received from one origin to an
-    unrelated origin.
-
-If a target service requires authenticated or stateful access for an
-authorized crawler, that access **SHOULD** be explicitly configured and
-documented rather than obtained by simulating human consent or browser
-behavior.
-
-## 7. Security constraints
-
-The `User-Agent` header is client-controlled and can be spoofed.
-
-Therefore:
-
--   **MUST NOT** use an `FAU-*` User-Agent as authentication.
--   **MUST NOT** grant access to protected resources based only on the
-    User-Agent.
--   **MUST NOT** bypass authentication based only on the User-Agent.
--   **MUST NOT** disable security controls based only on the User-Agent.
--   **MUST NOT** whitelist a crawler solely by User-Agent when the
-    whitelist grants additional privileges.
--   **MUST NOT** assume that a request originates from FAU merely
-    because the User-Agent starts with `FAU-`.
-
-Where verified identity is required, use an additional verifiable
-mechanism such as authentication or controlled source IP
-addresses/networks.
-
-## 8. Validation
-
-The product/version prefix **SHOULD** satisfy:
-
-``` regex
-^FAU-[A-Za-z0-9_-]+-[A-Za-z0-9_-]+/[0-9]+(?:\.[0-9]+)+
+``` text
+/llms.txt
 ```
 
-A validator **SHOULD** additionally verify:
+oder
 
--   `INFO-URL` is a syntactically valid HTTPS URL;
--   `CONTACT` contains a syntactically valid email address;
--   the separator is either the canonical `;mailto:` form or the
-    legacy-compatible `; mailto:` form;
--   generators use the canonical `;mailto:` form for newly generated
-    User-Agent values;
--   no required component is empty;
--   `ORG` and `BOT` contain no whitespace;
--   version contains at least two numeric components for new
-    implementations.
+``` text
+/llms-full.txt
+```
 
-## 9. Valid examples
+bereitstellen.
+
+Ein geeigneter Crawler sollte solche Informationen berücksichtigen, wenn
+sie vorhanden und für seinen Zweck relevant sind.
+
+Dabei ist zu beachten, dass diese Dateien eine Konvention darstellen und
+nicht auf jeder Website vorhanden sind. Ihr Fehlen ist daher kein
+Fehler.
+
+Ebenso dürfen Angaben in einer solchen Datei keine bestehenden
+Zugriffsbeschränkungen außer Kraft setzen.
+
+## 8. APIs und strukturierte Inhalte bevorzugen
+
+Viele Content-Management-Systeme stellen Inhalte nicht nur als HTML,
+sondern zusätzlich über APIs oder andere strukturierte Formate bereit.
+
+Wenn eine solche Schnittstelle den benötigten Inhalt vollständig und
+zuverlässig liefert, sollte ein Crawler sie gegenüber einem aufwendigen
+HTML-Crawl bevorzugen.
+
+Das kann beispielsweise JSON-Daten einer REST-API betreffen.
+
+Dadurch können unter anderem Navigation, Layoutinformationen,
+wiederkehrende Seitenelemente und anderer für die eigentliche
+Inhaltsanalyse unnötiger HTML-Ballast vermieden werden.
+
+Das reduziert:
+
+-   übertragene Daten,
+-   Serverlast,
+-   Parsing-Aufwand,
+-   bei KI-Anwendungen häufig auch die Zahl unnötiger Tokens.
+
+## 9. Maschinenlesbare Alternativen aus HTML erkennen
+
+Manchmal kennt ein Crawler die API einer Website zunächst nicht.
+
+CMS und andere Webanwendungen können jedoch im HTML-Dokument selbst auf
+alternative Repräsentationen verweisen. Dazu gehören beispielsweise
+`<link>`-Elemente mit geeigneten `rel`-Angaben oder CMS-spezifische
+Hinweise auf JSON- und REST-Schnittstellen.
+
+WordPress kann beispielsweise im HTML Informationen bereitstellen, über
+die ein Client REST-API- bzw. JSON-Ressourcen entdecken kann.
+
+Wenn ein Crawler beim Abruf einer HTML-Seite eine solche
+maschinenlesbare Alternative findet, sollte er prüfen, ob diese für
+seine Aufgabe besser geeignet ist.
+
+Liefert sie die benötigten Inhalte vollständig, sollte die strukturierte
+Repräsentation bevorzugt und redundante weitere HTML-Verarbeitung
+vermieden werden.
+
+Der Crawler darf allerdings nicht automatisch davon ausgehen, dass jede
+JSON- oder API-Repräsentation sämtliche Inhalte der HTML-Seite enthält.
+
+## 10. Umgang mit `/.well-known/`
+
+Der Pfad
+
+``` text
+/.well-known/
+```
+
+wird für verschiedene standardisierte und anwendungsspezifische
+Informationen verwendet.
+
+Ein Crawler darf dort gezielt Ressourcen verwenden, die er kennt und für
+seinen Zweck unterstützt.
+
+Er soll jedoch nicht versuchen, das Verzeichnis pauschal zu durchsuchen
+oder beliebige bekannte Dateinamen durchzuprobieren.
+
+Das bedeutet insbesondere:
+
+-   kein rekursives Crawling von `/.well-known/`,
+-   keine systematische Enumeration möglicher Ressourcen,
+-   Abruf nur bekannter, unterstützter oder ausdrücklich referenzierter
+    Ressourcen.
+
+Die bloße Existenz von `/.well-known/` bedeutet nicht, dass dort für den
+jeweiligen Crawler relevante Inhalte liegen.
+
+## 11. Maximal drei Requests pro Sekunde
+
+Ein FAU-Crawler darf standardmäßig höchstens
+
+**3 Requests pro Sekunde und Origin/Host**
+
+starten.
+
+Das Limit gilt für den gesamten Crawler.
+
+Es ist daher nicht zulässig, beispielsweise zehn parallele Worker zu
+starten, von denen jeder drei Requests pro Sekunde sendet. Alle
+parallelen Prozesse, Threads oder asynchronen Requests müssen sich
+gemeinsam an dasselbe Limit halten.
+
+Ein Crawler darf selbstverständlich langsamer arbeiten.
+
+Eine höhere Rate darf nur verwendet werden, wenn dies für den
+betreffenden Zielserver ausdrücklich konfiguriert und autorisiert wurde.
+
+Strengere Vorgaben des Zielsystems haben Vorrang.
+
+## 12. Verhalten bei Überlastung und Rate-Limits
+
+Ein verantwortungsvoller Crawler muss darauf reagieren, wenn ein Server
+signalisiert, dass zu viele Anfragen erfolgen oder der Dienst
+vorübergehend nicht verfügbar ist.
+
+Besonders relevant sind:
+
+``` text
+429 Too Many Requests
+503 Service Unavailable
+Retry-After
+```
+
+Gibt der Server einen `Retry-After`-Header zurück, muss dieser
+berücksichtigt werden.
+
+Bei HTTP 429 oder 503 darf der Crawler nicht einfach mit unveränderter
+Geschwindigkeit weiterarbeiten oder aggressive Wiederholungsversuche
+durchführen.
+
+Stattdessen soll die Request-Rate reduziert und bei wiederholten Fehlern
+ein exponentieller Backoff verwendet werden. Die Wartezeit zwischen
+weiteren Versuchen wird dabei schrittweise erhöht.
+
+## 13. Cookies und Sitzungen
+
+Crawler sollen grundsätzlich **zustandslos -- stateless -- arbeiten**.
+
+Das bedeutet insbesondere, dass Cookies nicht automatisch dauerhaft
+gespeichert und bei späteren Requests wieder übertragen werden sollten.
+
+Technisch notwendige Cookies bleiben zulässig. Das kann beispielsweise
+erforderlich sein, wenn ein ausdrücklich für den Crawler vorgesehener
+Dienst für seine technische Funktion einen Sitzungszustand benötigt.
+
+Nicht verwendet werden sollen dagegen Cookies für:
+
+-   Tracking,
+-   Webanalyse,
+-   Werbung,
+-   Personalisierung,
+-   Consent Management.
+
+Ein Crawler soll insbesondere keine für menschliche Besucher
+vorgesehenen Cookie-Consent-Dialoge bedienen und nicht automatisiert auf
+sinngemäße Funktionen wie „Alle akzeptieren" reagieren.
+
+Cookies dürfen außerdem nicht verwendet werden, um Zugriffsschutz,
+Authentisierung, Paywalls, Crawler-Beschränkungen oder Anti-Bot- und
+Sicherheitsmaßnahmen zu umgehen.
+
+Sind Cookies technisch notwendig, sollen sie nur für die betreffende
+Origin bzw. Sitzung und nur so lange wie tatsächlich erforderlich
+gespeichert werden.
+
+Cookies einer Origin dürfen nicht an eine nicht zugehörige Origin
+weitergegeben werden.
+
+## 14. Der User-Agent ist keine Authentisierung
+
+Ein User-Agent wird vollständig vom Client selbst bestimmt.
+
+Ein Angreifer oder externer Crawler kann daher problemlos behaupten:
 
 ``` text
 FAU-RRZE-Legalcheck/1.0 (+https://www.rrze.fau.de/bots/legalcheck/;mailto:webmaster@fau.de)
-FAU-RRZE-SearchBot/2.3 (+https://www.rrze.fau.de/bots/searchbot/;mailto:webmaster@fau.de)
-FAU-UB-CatalogCrawler/1.1 (+https://www.ub.fau.de/bots/catalogcrawler/;mailto:webmaster@ub.fau.de)
 ```
 
-## 10. Invalid or non-compliant examples
+Das bedeutet nicht, dass der Request tatsächlich vom RRZE oder überhaupt
+von der FAU stammt.
 
-``` text
-Mozilla/5.0
-python-requests/2.32
-curl/8.0
-Crawler
-FAU-Bot
-FAU-RRZE-Legalcheck
-FAU-RRZE-Legalcheck/1.0
-```
+Daher darf allein aufgrund eines `FAU-`-User-Agents insbesondere nicht:
 
-Reasons include missing organizational identity, missing unique bot
-name, missing version, missing required contact information, or
-deviation from the canonical separator syntax.
+-   ein geschützter Bereich freigegeben werden,
+-   eine Authentisierung umgangen werden,
+-   eine Sicherheitskontrolle deaktiviert werden,
+-   ein privilegierter Zugriff erlaubt werden.
 
-## 11. Implementation acceptance criteria
+Wenn die Identität eines Crawlers technisch verifiziert werden muss, ist
+dafür ein zusätzliches überprüfbares Verfahren erforderlich,
+beispielsweise eine geeignete Authentisierung oder kontrollierte
+Quell-IP-Adressen bzw. Netze.
 
-An implementation is compliant only if all applicable criteria below are
-met:
+## 15. Praktische Checkliste für einen neuen FAU-Crawler
 
--   [ ] User-Agent starts with `FAU-`.
--   [ ] `ORG` identifies the responsible FAU organization.
--   [ ] `BOT` uniquely and stably identifies the crawler.
--   [ ] A version is supplied.
--   [ ] A monitored `mailto:` contact is supplied.
--   [ ] A stable information URL is supplied for production deployment.
--   [ ] Newly generated User-Agent values use the canonical `;mailto:`
-    separator.
--   [ ] Parsers and validators also accept the legacy-compatible
-    `; mailto:` separator.
--   [ ] The configured User-Agent is actually transmitted on crawler
-    requests.
--   [ ] Applicable `robots.txt` rules are honored.
--   [ ] `Sitemap:` directives in `robots.txt` are evaluated and used for
-    URL discovery where applicable.
--   [ ] Sitemap index files are supported where sitemap discovery is
-    implemented.
--   [ ] Machine-readable discovery follows the preferred order:
-    `robots.txt` → declared sitemaps → `llms.txt`/`llms-full.txt` →
-    suitable APIs/structured representations → HTML crawling.
--   [ ] AI-specific metadata never overrides `robots.txt`, HTTP access
-    controls, authentication requirements or rate limits.
--   [ ] Suitable machine-readable content representations are preferred
-    over redundant HTML crawling when they fully satisfy the crawler's
-    purpose.
--   [ ] Retrieved HTML documents are inspected for advertised
-    machine-readable alternatives, including relevant `rel` links and
-    CMS-specific API/JSON discovery metadata.
--   [ ] Advertised structured representations are preferred over
-    redundant HTML processing when they provide the content required for
-    the crawler's task.
--   [ ] `/.well-known/` is not enumerated or recursively crawled; only
-    explicitly supported or referenced resources are requested.
--   [ ] The crawler initiates no more than 3 requests per second per
-    origin/host unless explicitly authorized otherwise.
--   [ ] Concurrent workers share the same per-origin/host rate limit.
--   [ ] `Retry-After` is respected.
--   [ ] HTTP 429 and 503 responses trigger appropriate rate
-    reduction/backoff behavior.
--   [ ] The crawler is stateless by default and retains cookies only
-    where technically required for its explicitly defined purpose.
--   [ ] Tracking, analytics, advertising, personalization and consent
-    cookies are not intentionally persisted or returned.
--   [ ] Cookie-consent dialogs are not used to simulate human consent.
--   [ ] Cookies or session state are not used to bypass authentication,
-    access restrictions or security/anti-bot controls.
--   [ ] No authentication or privileged trust decision relies solely on
-    the User-Agent.
+Vor dem produktiven Einsatz sollte geprüft werden:
 
-## 12. Canonical project rule
-
-When generating, modifying or reviewing crawler code for an FAU project,
-**do not accept a library default User-Agent**. Explicitly configure:
-
-``` text
-FAU-<ORG>-<BOT>/<VERSION> (+<INFO-URL>;mailto:<CONTACT>)
-```
-
-If one or more required project-specific values are unknown, **do not
-invent them**. Mark the value as requiring project configuration or
-request the missing information.
+-   [ ] Der User-Agent folgt dem Schema
+    `FAU-<ORG>-<BOT>/<VERSION> (+<INFO-URL>;mailto:<CONTACT>)`.
+-   [ ] Die verantwortliche FAU-Einrichtung ist eindeutig angegeben.
+-   [ ] Der Bot besitzt einen stabilen Namen.
+-   [ ] Der Name bezeichnet nicht lediglich Programmiersprache,
+    Bibliothek oder Abrufwerkzeug.
+-   [ ] Eine Versionsnummer ist vorhanden.
+-   [ ] Eine dauerhaft erreichbare Informationsseite ist angegeben.
+-   [ ] Eine betreute Kontaktadresse ist angegeben.
+-   [ ] Neue Implementierungen erzeugen die kanonische Schreibweise
+    `;mailto:`.
+-   [ ] Bestehende User-Agents mit `; mailto:` werden weiterhin
+    akzeptiert.
+-   [ ] `robots.txt` wird vor einem systematischen Crawl berücksichtigt.
+-   [ ] Dort angegebene Sitemaps und Sitemap-Indizes werden ausgewertet.
+-   [ ] `llms.txt` und andere geeignete maschinenlesbare Hinweise werden
+    berücksichtigt.
+-   [ ] Vor unnötigem HTML-Crawling werden geeignete APIs und
+    strukturierte Repräsentationen bevorzugt.
+-   [ ] HTML-Metadaten werden auf verlinkte maschinenlesbare
+    Alternativen geprüft.
+-   [ ] `/.well-known/` wird nicht pauschal enumeriert.
+-   [ ] Es werden insgesamt höchstens 3 Requests pro Sekunde und
+    Origin/Host gestartet.
+-   [ ] Parallele Worker verwenden ein gemeinsames Rate-Limit.
+-   [ ] `Retry-After`, HTTP 429 und HTTP 503 werden berücksichtigt.
+-   [ ] Der Crawler arbeitet standardmäßig ohne persistenten
+    Cookie-Zustand.
+-   [ ] Cookies werden nicht zum Umgehen von Zugriffsschutz oder
+    Sicherheitsmaßnahmen eingesetzt.
+-   [ ] Der User-Agent wird niemals als alleiniger Authentisierungs-
+    oder Vertrauensnachweis verwendet.
