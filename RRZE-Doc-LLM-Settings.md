@@ -1,25 +1,32 @@
 # Zentrale Einbindung der RRZE-Plugin-Spezifikation in LLM-Werkzeuge
 
-( Version: 1.1,  Date: 31.08.2026,  Source: https://github.com/RRZE-Webteam/SPEC/RRZE-Doc-LLM-Settings.md )
+( Version: 1.2,  Date: 31.08.2026,  Source: https://github.com/RRZE-Webteam/SPEC/RRZE-Doc-LLM-Settings.md )
 
 Geltungsbereich: Entwicklung, Analyse und Wartung von WordPress-Plugins für das CMS-Angebot des RRZE sowie Entwicklung, Analyse und Wartung von FAU-Crawlern
 
 ## Grundsatz
 
-Die RRZE-Spezifikationen sind **zentrale Organisationsvorgaben**. Sie dürfen nicht in einzelne Plugin-Repositories kopiert werden. Ein Plugin-Repository ist das zu bearbeitende Produkt, nicht der Ablageort für allgemeine Entwicklungsregeln.
+Die Spezifikationen sind zentrale Vorgaben des RRZE-Webteams für die Entwicklung und Bereitstellung von Plugins, Themes und anderen Webanwendung, die auf dem CMS- oder Webspace-Server des RRZE-Webtams bereitgestellt werden sollen.
+
+Sie sollten nicht in einzelne Plugin-Repositories kopiert werden. Ein Plugin-Repository ist das zu bearbeitende Produkt, nicht der Ablageort für allgemeine Entwicklungsregeln.
 
 Es gibt genau eine kanonische Quelle, zum Beispiel ein zentral verwaltetes Git-Repository oder einen zentral bereitgestellten, schreibgeschützten Ordner. Dieser wird im Folgenden **Standardquelle** genannt. Sie enthält mindestens:
 
 ```text
 RRZE-WordPress-Plugin.md
 RRZE-WordPress-Entwicklungsumgebung.md
-RRZE-WordPress-Entwicklungsumgebung-LLM-Shortcut.md
-RRZE-WordPress-Plugin-Testprompts.md
 RRZE-Crawler-Rules.md
+```
+
+Sowie optional auch eine für LLMs komprimierte Kuzfassung:
+
+```text
+RRZE-WordPress-Plugin-LLM-Shortcut.md
+RRZE-WordPress-Entwicklungsumgebung-LLM-Shortcut.md
 RRZE-Crawler-Rules-LLM-Shortcut.md
 ```
 
-Die Standardquelle wird fachlich verantwortet, versioniert und nur an dieser Stelle geändert. Auf Arbeitsrechnern wird sie einmal zentral bereitgestellt, beispielsweise als lokaler Clone eines internen Vorgaben-Repositories. Der konkrete lokale Pfad wird durch die betreuende Stelle festgelegt. Er soll für alle betreuten Entwicklungsarbeitsplätze einheitlich sein.
+Die Standardquelle wird durch das RRZE-Webteam betreut, versioniert und nur an dieser Stelle (https://github.com/RRZE-Webteam/SPEC/) geändert. Auf Arbeitsrechnern wird sie einmal zentral bereitgestellt, beispielsweise als lokaler Clone eines internen Vorgaben-Repositories. Der konkrete lokale Pfad wird durch die betreuende Stelle festgelegt. Er soll für alle betreuten Entwicklungsarbeitsplätze einheitlich sein.
 
 ## Was dauerhaft hinterlegt wird
 
@@ -50,10 +57,7 @@ Dienstes abruft.
 Lies vor Beginn jeder solchen Aufgabe die aktuelle Fassung aus
 <STANDARDQUELLE>:
 - RRZE-WordPress-Plugin.md
-- RRZE-WordPress-Entwicklungsumgebung.md
 - RRZE-WordPress-Entwicklungsumgebung-LLM-Shortcut.md
-- RRZE-WordPress-Plugin-Testprompts.md
-- RRZE-Crawler-Rules.md
 - RRZE-Crawler-Rules-LLM-Shortcut.md
 
 Die Spezifikationen sind zentrale Vorgaben und dürfen weder in ein
@@ -123,10 +127,7 @@ Diese Datei enthält die gemeinsame Steueranweisung und bindet die zentrale Stan
 
 ```text
 @/zentraler/pfad/zu/rrze-llm-standards/RRZE-WordPress-Plugin.md
-@/zentraler/pfad/zu/rrze-llm-standards/RRZE-WordPress-Entwicklungsumgebung.md
 @/zentraler/pfad/zu/rrze-llm-standards/RRZE-WordPress-Entwicklungsumgebung-LLM-Shortcut.md
-@/zentraler/pfad/zu/rrze-llm-standards/RRZE-WordPress-Plugin-Testprompts.md
-@/zentraler/pfad/zu/rrze-llm-standards/RRZE-Crawler-Rules.md
 @/zentraler/pfad/zu/rrze-llm-standards/RRZE-Crawler-Rules-LLM-Shortcut.md
 ```
 
