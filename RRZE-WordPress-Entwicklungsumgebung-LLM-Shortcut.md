@@ -1,6 +1,6 @@
 # RRZE WordPress Development Environment - LLM Installation Specification
 
-( Version: 1.0, Date: 20260825 )
+( Version: 1.0,  Date: 25.08.2026 )
 
 Audience: LLMs and automation agents that create, configure, or verify a local WordPress development environment.
 
@@ -8,7 +8,7 @@ Audience: LLMs and automation agents that create, configure, or verify a local W
 
 Read and apply these sources before making changes:
 
-1. `RRZE-WordPress-Plugin-Standard-v1.15.md` or a newer approved RRZE WordPress Plugin Engineering Standard.
+1. `RRZE-WordPress-Plugin.md` or a newer approved RRZE WordPress Plugin Engineering Standard.
 2. https://www.wp.rrze.fau.de/entwicklung/eigene-testinstanz/
 
 Create a reproducible, non-production, domain-based WordPress Multisite environment suitable for developing and testing RRZE-compatible plugins and themes.

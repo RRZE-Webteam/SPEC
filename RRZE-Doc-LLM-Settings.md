@@ -1,6 +1,6 @@
 # Zentrale Einbindung der RRZE-Plugin-Spezifikation in LLM-Werkzeuge
 
-Stand: 25. August 2026  
+( Version: 1.0,  Date: 25.08.2026 )
 
 Geltungsbereich: Entwicklung, Analyse und Wartung von WordPress-Plugins für das CMS-Angebot des RRZE
 
@@ -11,10 +11,10 @@ Die RRZE-Spezifikationen sind **zentrale Organisationsvorgaben**. Sie dürfen ni
 Es gibt genau eine kanonische Quelle, zum Beispiel ein zentral verwaltetes Git-Repository oder einen zentral bereitgestellten, schreibgeschützten Ordner. Dieser wird im Folgenden **Standardquelle** genannt. Sie enthält mindestens:
 
 ```text
-RRZE-WordPress-Plugin-Standard.md
+RRZE-WordPress-Plugin.md
 RRZE-WordPress-Entwicklungsumgebung.md
-RRZE-WordPress-Entwicklungsumgebung-LLM-Spezifikation.md
-Testprompts.md
+RRZE-WordPress-Entwicklungsumgebung-LLM-Shortcut.md
+RRZE-WordPress-Plugin-Testprompts.md
 ```
 
 Die Standardquelle wird fachlich verantwortet, versioniert und nur an dieser Stelle geändert. Auf Arbeitsrechnern wird sie einmal zentral bereitgestellt, beispielsweise als lokaler Clone eines internen Vorgaben-Repositories. Der konkrete lokale Pfad wird durch die betreuende Stelle festgelegt. Er soll für alle betreuten Entwicklungsarbeitsplätze einheitlich sein.
@@ -41,10 +41,10 @@ CMS-Angebot des RRZE.
 
 Lies vor Beginn jeder solchen Aufgabe die aktuelle Fassung aus
 <STANDARDQUELLE>:
-- RRZE-WordPress-Plugin-Standard.md
+- RRZE-WordPress-Plugin.md
 - RRZE-WordPress-Entwicklungsumgebung.md
-- RRZE-WordPress-Entwicklungsumgebung-LLM-Spezifikation.md
-- Testprompts.md
+- RRZE-WordPress-Entwicklungsumgebung-LLM-Shortcut.md
+- RRZE-WordPress-Plugin-Testprompts.md
 
 Die Spezifikationen sind zentrale Vorgaben und dürfen weder in ein
 Plugin-Repository kopiert noch durch lokale Projektanweisungen abgeschwächt
@@ -112,10 +112,10 @@ Für Gemini CLI wird die globale Nutzerdatei verwendet:
 Diese Datei enthält die gemeinsame Steueranweisung und bindet die zentrale Standardquelle über absolute `@`-Importe ein. Beispielhaft, mit einem von der Betreuung festgelegten Pfad:
 
 ```text
-@/zentraler/pfad/zu/rrze-llm-standards/RRZE-WordPress-Plugin-Standard.md
+@/zentraler/pfad/zu/rrze-llm-standards/RRZE-WordPress-Plugin.md
 @/zentraler/pfad/zu/rrze-llm-standards/RRZE-WordPress-Entwicklungsumgebung.md
-@/zentraler/pfad/zu/rrze-llm-standards/RRZE-WordPress-Entwicklungsumgebung-LLM-Spezifikation.md
-@/zentraler/pfad/zu/rrze-llm-standards/Testprompts.md
+@/zentraler/pfad/zu/rrze-llm-standards/RRZE-WordPress-Entwicklungsumgebung-LLM-Shortcut.md
+@/zentraler/pfad/zu/rrze-llm-standards/RRZE-WordPress-Plugin-Testprompts.md
 ```
 
 Gemini CLI lädt die globale Datei für jedes bearbeitete Projekt. Mit `/memory show` wird geprüft, ob die zentrale Spezifikation geladen ist; nach einer Aktualisierung lädt `/memory reload` sie neu. Eine `GEMINI.md` im Plugin-Repository ist für die RRZE-Spezifikation nicht erforderlich.

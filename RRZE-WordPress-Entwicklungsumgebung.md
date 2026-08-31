@@ -1,6 +1,6 @@
 # WordPress-Entwicklungsumgebung für das CMS-Angebot des RRZE
 
-( Version: 1.0, Date: 20260825 )
+( Version: 1.0,  Date: 25.08.2026 )
 
 ## Zweck
 

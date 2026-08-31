@@ -1,6 +1,7 @@
 # FAU Crawler User-Agent Specification --- LLM/Agent Project Rules
 
-**Specification version:** 1.5\
+( Version: 1.5,  Date: 31.08.2026 )
+
 **Scope:** All software that performs automated HTTP retrieval or
 crawling on behalf of an FAU organizational unit, project or service.
 

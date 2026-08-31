@@ -1,7 +1,7 @@
 # FAU-Crawler: Kennzeichnung und Regeln für den schonenden Abruf von Websites
 
-**Version:** 1.0\
-**Stand:** 31.08.2026
+( Version: 1.0,  Date: 31.08.2026 )
+
 **Abgeleitet aus:** FAU Crawler User-Agent Specification --- LLM/Agent
 Project Rules, Version 1.5
 

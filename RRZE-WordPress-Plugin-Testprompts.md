@@ -1,5 +1,7 @@
 # Testprompts für WordPress-Plugin-Audits
 
+( Version: 1.1,  Date: 31.08.2026 )
+
 Diese Prompts dienen zur Prüfung bestehender oder von Dritten gelieferter WordPress-Plugins gegen den jeweils aktuellen **RRZE WordPress Plugin Engineering Standard**. Der Standard muss dem prüfenden System als Datei oder eindeutig referenzierte Ressource vorliegen.
 
 Der Gesamt-Audit ist die Standardprüfung. Die spezialisierten Prompts werden ergänzend eingesetzt, wenn ein Bereich vertieft geprüft werden soll.
@@ -8,7 +10,7 @@ Der Gesamt-Audit ist die Standardprüfung. Die spezialisierten Prompts werden er
 
 Die Testumgebung wird nach diesen beiden Dokumenten eingerichtet und betrieben:
 
-- [LLM-Installationsspezifikation](RRZE-WordPress-Entwicklungsumgebung-LLM-Spezifikation.md)
+- [LLM-Installationsspezifikation](RRZE-WordPress-Entwicklungsumgebung-LLM-Shortcut.md)
 - [Entwicklungsumgebung für Menschen und LLMs](RRZE-WordPress-Entwicklungsumgebung.md)
 
 Bei einem Audit müssen diese Dokumente zusammen mit dem aktuellen RRZE WordPress Plugin Engineering Standard als Prüfgrundlage gelesen werden. Sie definieren insbesondere die domainbasierte WordPress-Multisite, Referenzthemes, Referenz-Plugins, Rollen und verfügbaren Laufzeitprüfungen.
@@ -143,7 +145,7 @@ Untersuche Frontend, wp-admin-Oberflächen, Einstellungsseiten, Formulare,
 dynamische Oberflächen und gegebenenfalls alle Gutenberg-Blöcke. Ändere keine Dateien.
 
 Prüfe mindestens:
-- WCAG 2.2 AA allgemein sowie AAA bei Formulareingaben;
+- WCAG 2.2 AA allgemein sowie AAA als gewünschtes, aber nicht zwingendes Ziel bei Formulareingaben;
 - semantisches HTML;
 - Tastaturbedienung und sichtbaren Fokus;
 - gültiges HTML und korrekte semantische Struktur;

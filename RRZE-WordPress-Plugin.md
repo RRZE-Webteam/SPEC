@@ -1,7 +1,6 @@
 # RRZE WordPress Plugin Engineering Standard and AI Development Prompt
 
-
-( Version: 1.17, Date: 20260828 )
+( Version: 1.18,  Date: 31.08.2026 )
 
 > **Purpose:** This document defines the mandatory baseline for creating, extending, reviewing, and maintaining WordPress plugins intended for operation in RRZE/FAU environments.
 >
@@ -11,7 +10,7 @@
 
 ---
 
-## 1. Core principle
+# 1. Core principle
 
 A WordPress plugin is not considered complete merely because it works once or because generated code passes a superficial test.
 
@@ -39,7 +38,7 @@ Do not duplicate existing functionality without an explicit architectural reason
 
 ---
 
-# 1.1 Binding rules for admission to the RRZE CMS
+## 1.1 Binding rules for admission to the RRZE CMS
 
 For plugins intended to be operated on or admitted to the central FAU/RRZE CMS, the current rules published by RRZE are binding:
 
@@ -70,45 +69,45 @@ In particular:
 
 Technical compliance alone does not create an entitlement to installation or continued operation on the RRZE CMS.
 
-# 1.2 Priority requirements for RRZE CMS plugins
+## 1.2 Priority requirements for RRZE CMS plugins
 
 The following are high-priority acceptance criteria and MUST be considered from the beginning of development.
 
-## 1.2.1 Multisite is mandatory
+### 1.2.1 Multisite is mandatory
 
 Every plugin intended for the RRZE CMS MUST be fully WordPress Multisite-capable. This requirement cannot be waived by a project-local exception. A plugin that only works correctly in Single Site MUST NOT be admitted to the RRZE CMS.
 
 The plugin MUST correctly separate network-wide and site-specific configuration, permissions, data, uploads, activation/update behavior and migrations, and MUST be designed for large Multisite installations.
 
-## 1.2.2 Usability for non-technical users
+### 1.2.2 Usability for non-technical users
 
 Usability by editors and administrators without technical training is a primary functional requirement. Settings and workflows MUST be self-explanatory, unambiguous, task-oriented and consistent with WordPress conventions. Technical implementation details MUST NOT be exposed merely because this is convenient for developers.
 
 Normal settings MUST be separated from advanced or rarely used settings. Advanced functionality SHOULD be placed in a clearly identified `Advanced` / `Erweitert` section. Safe defaults SHOULD be used wherever possible.
 
-## 1.2.3 WordPress-native GUI and Block Editor
+### 1.2.3 WordPress-native GUI and Block Editor
 
 Plugin administration MUST follow the established WordPress GUI and interaction model. WordPress-native controls, notices, settings patterns and editor concepts MUST be used wherever suitable equivalents exist. Editorial controls associated with posts, pages or block-based content MUST integrate naturally with the Block Editor.
 
-## 1.2.4 End-user documentation is mandatory
+### 1.2.4 End-user documentation is mandatory
 
 Every production plugin MUST have both a named, competent and reachable maintainer/support contact and maintained user documentation available on a web page.
 
 The documentation MUST be understandable without computer-science or software-development knowledge and explain purpose, normal workflows, relevant settings, permissions, limitations and common problems where applicable. Repository-only developer documentation is not sufficient. The canonical documentation URL MUST be referenced from `README.md` and SHOULD be linked from the plugin administration interface where appropriate.
 
-## 1.2.5 Block-first content integration
+### 1.2.5 Block-first content integration
 
 New plugins that insert or manage content in posts, pages or custom post types MUST use WordPress blocks. New shortcodes for content-authoring functionality are prohibited. Existing legacy shortcodes MAY only be retained for backwards compatibility.
 
 New plugins SHOULD avoid classic metaboxes on block-enabled post types. Where document-level configuration is needed, current Block Editor-compatible mechanisms MUST be preferred. A classic metabox MAY only be introduced when no suitable current mechanism exists and the reason is documented.
 
-## 1.2.6 Capability-based separation
+### 1.2.6 Capability-based separation
 
 Advanced functionality intended only for experienced or privileged users MUST use the WordPress capability system. Hiding controls with CSS or JavaScript is not authorized; permissions MUST be enforced server-side.
 
 On Multisite, network-global configuration MUST only be editable by appropriately authorized Network Admin/Super Admin users. Site-specific configuration with substantial effects on site appearance, behavior, integrations or data MUST only be editable by appropriately authorized Site Admin users. Ordinary editors MUST only receive controls required for their editorial tasks.
 
-## 1.2.7 Network-wide license keys and secrets
+### 1.2.7 Network-wide license keys and secrets
 
 If a license key, API credential, token or comparable secret is valid for the complete Multisite network, it MUST be stored and managed exclusively as a network option using `get_site_option()`, `update_site_option()`. The architecture for API-Key storage of `rrze-faudir` SHOULD be considered as a reference pattern where applicable.
 
@@ -158,7 +157,7 @@ Frontend and backend user interfaces MUST be designed for accessibility.
 Target:
 
 - WCAG 2.2 Level AA as the general minimum requirement;
-- **WCAG 2.2 Level AAA for all form input workflows, form controls, validation, instructions, error handling, and user input interactions wherever the applicable WCAG success criteria can be satisfied by the plugin itself;**
+- WCAG 2.2 Level AAA for form input workflows, form controls, validation, instructions, error handling, and user input interactions is desirable wherever the applicable WCAG success criteria can be satisfied by the plugin itself, but it is not mandatory;
 - semantic HTML;
 - keyboard operability;
 - visible focus;
@@ -178,7 +177,7 @@ Reference:
 
 Accessibility is a mandatory functional requirement, not a cosmetic enhancement.
 
-For forms and other direct data-entry workflows, the plugin MUST apply the stricter project requirement of **WCAG 2.2 AAA** to all criteria that are technically and contextually applicable to the plugin-controlled interface.
+For forms and other direct data-entry workflows, **WCAG 2.2 AAA** SHOULD be considered and applied where reasonable and technically practical. It is a desired quality target, not a mandatory acceptance requirement.
 
 Corporate design requirements MUST NOT override accessibility requirements.
 
@@ -1230,7 +1229,33 @@ Use batches.
 
 ---
 
-# 27. Caching
+# 27. Retrieval of external websites
+
+If a plugin performs automated retrieval of external websites, feeds, APIs,
+files, or other web resources on behalf of an FAU organizational unit,
+project, or service, it MUST follow the FAU crawler rules defined in
+`RRZE-Crawler-Rules.md`.
+
+The plugin MUST explicitly set an appropriate HTTP `User-Agent` for such
+requests instead of relying on the default User-Agent of WordPress, PHP, wget,
+curl, Guzzle, Requests, or any other HTTP library.
+
+The User-Agent MUST identify the responsible FAU organization, the crawler or
+plugin component, its version, a stable information URL, and a monitored
+contact address according to the schema defined in `RRZE-Crawler-Rules.md`.
+
+The plugin MUST also respect applicable crawler behavior rules, including
+`robots.txt`, declared sitemaps where relevant, target-specific access
+restrictions, per-origin rate limits, `Retry-After`, HTTP 429 and HTTP 503
+backoff behavior, and the restrictions on cookies and session state.
+
+Do not use wget, curl, PHP streams, Guzzle, Requests, browser automation, or
+similar retrieval mechanisms to bypass WordPress HTTP API requirements,
+identity requirements, access controls, crawler restrictions, or rate limits.
+
+---
+
+# 28. Caching
 
 Caching SHOULD use WordPress-supported mechanisms unless the infrastructure explicitly provides another abstraction.
 
@@ -1251,7 +1276,7 @@ Network-wide data MAY use site transients where appropriate.
 
 ---
 
-# 28. Internationalization
+# 29. Internationalization
 
 All user-visible strings MUST be translatable unless they are externally supplied data.
 
@@ -1281,7 +1306,7 @@ Do not concatenate sentence fragments where that prevents correct translation.
 
 ---
 
-# 29. Accessibility implementation rules
+# 30. Accessibility implementation rules
 
 All UI generated by the plugin MUST be operable without a mouse.
 
@@ -1318,7 +1343,7 @@ Do not remove focus outlines without providing an accessible replacement.
 
 ---
 
-# 30. Editor UX
+# 31. Editor UX
 
 The target users of administrative interfaces are editors and administrators, not plugin developers.
 
@@ -1342,11 +1367,11 @@ Do not assume that technically detectable state is equivalent to editorial inten
 
 ---
 
-# 31. WordPress Blocks
+# 32. WordPress Blocks
 
 For new plugins that add content to posts, pages, or custom post types, blocks are the mandatory content integration mechanism. Blocks MUST use current WordPress block APIs. New shortcodes MUST NOT be introduced for content-authoring functionality. Classic metaboxes SHOULD NOT be introduced for new functionality on block-enabled post types unless no appropriate Block Editor mechanism exists and the reason is documented.
 
-## 31.1 Block category and name
+## 32.1 Block category and name
 
 Every plugin block SHOULD be assigned to the `RRZE`, `FAU`, or an agreed institutional category, such as the abbreviation of another higher education institution.
 
@@ -1370,7 +1395,7 @@ plugin-name/block-name
 
 If a plugin provides multiple blocks, the plugin slug MAY be used as the namespace. Block names are a public compatibility surface and MUST NOT be renamed casually.
 
-## 31.2 Block metadata, structure and backwards compatibility
+## 32.2 Block metadata, structure and backwards compatibility
 
 New blocks SHOULD follow the current WordPress-recommended block file structure. `block.json` MUST remain the primary definition of block metadata.
 
@@ -1382,7 +1407,7 @@ Block updates MUST preserve existing editorial content. The WordPress Block Depr
 
 Static blocks MUST provide appropriate deprecated block definitions for every supported historical markup or attribute format. Dynamic blocks MUST likewise preserve compatible parsing of existing saved block comments and attributes when `block.json` or attributes change.
 
-## 31.3 Block controls and editorial usability
+## 32.3 Block controls and editorial usability
 
 Block controls MUST follow the WordPress interaction model. Settings required to insert, fill, or quickly configure a block belong in the Block Toolbar. Complex, secondary, or advanced settings belong in the Settings Sidebar.
 
@@ -1390,7 +1415,7 @@ The normal editorial workflow of a block SHOULD be self-explanatory without requ
 
 Blocks MUST be delivered in English (`en_US`) and additionally provide German (`de_DE`) and formal German (`de_DE_formal`) translations for all user-visible strings.
 
-## 31.4 Block quality and styling
+## 32.4 Block quality and styling
 
 Blocks MUST work without errors with the currently operated WordPress version. They MUST NOT create browser-console errors during normal editor or frontend use. Defects MUST be corrected promptly.
 
@@ -1436,7 +1461,7 @@ Accessibility MUST apply in both editor and frontend output.
 
 ---
 
-# 32. JavaScript source structure
+# 33. JavaScript source structure
 
 Human-authored JavaScript & TypeScript MUST live below `src/`, or another explicitly documented source directory.
 
@@ -1476,7 +1501,7 @@ Never edit files in `build/` manually.
 
 ---
 
-# 33. JavaScript style
+# 34. JavaScript style
 
 Use modern JavaScript supported by the configured WordPress build pipeline.
 
@@ -1508,7 +1533,7 @@ Use WordPress-provided dependencies where appropriate.
 
 ---
 
-# 34. CSS and SCSS
+# 35. CSS and SCSS
 
 SCSS or source CSS MUST live in the source tree.
 
@@ -1555,11 +1580,11 @@ Prefix classes where practical, for example:
 
 ---
 
-# 35. Asset loading
+# 36. Asset loading
 
 CSS and JavaScript MUST only be loaded where required.
 
-## 35.1 Development and production asset modes
+## 36.1 Development and production asset modes
 
 The build system MUST distinguish clearly between development and production assets.
 
@@ -1597,7 +1622,7 @@ For production builds:
 
 The build/release process SHOULD fail if source maps are accidentally included in the production artifact.
 
-## 35.2 Consolidation and file naming
+## 36.2 Consolidation and file naming
 
 Production assets SHOULD be consolidated as far as technically sensible.
 
@@ -1660,7 +1685,7 @@ During development, `filemtime()` MAY be useful for cache busting, but productio
 
 ---
 
-# 36. Node.js build system
+# 37. Node.js build system
 
 Node.js MUST be used only for development/build tooling unless runtime JavaScript genuinely requires Node outside WordPress, which would be unusual.
 
@@ -1693,7 +1718,7 @@ In particular, `wp-scripts` MUST be used for block-specific build tasks, includi
 
 A custom script based only on `esbuild` and `sass`, for example `scripts/build-assets.js`, MUST NOT replace `wp-scripts` for these WordPress- or block-specific tasks unless equivalent behavior is explicitly implemented, documented, and verified.
 
-## 36.1 Asset and metadata-only builds
+## 37.1 Asset and metadata-only builds
 
 When a plugin provides no blocks, no Block Editor extensions, and no other WordPress-specific JavaScript build requirements, it MAY omit `@wordpress/scripts`.
 
@@ -1701,7 +1726,7 @@ In this limited case, a project-local Node.js script MAY use `esbuild` and `sass
 
 This exception is for asset and metadata generation only. It does not authorize a custom `esbuild`/`sass` script to build blocks or replace WordPress-specific `wp-scripts` behavior.
 
-## 36.2 Mixed projects
+## 37.2 Mixed projects
 
 Projects MAY combine both approaches. A project-local Node.js script MAY generate ordinary assets and synchronize version or documentation metadata, while `wp-scripts` builds all WordPress- and Block Editor-specific source code. Build commands MUST make this separation explicit and remain reproducible from a clean checkout.
 
@@ -1724,7 +1749,7 @@ Projects MAY combine both approaches. A project-local Node.js script MAY generat
 
 ### Asset and metadata-only baseline
 
-For a plugin covered by section 36.1, the build scripts MAY instead remain limited to the required asset and metadata tasks:
+For a plugin covered by section 37.1, the build scripts MAY instead remain limited to the required asset and metadata tasks:
 
 ```json
 {
@@ -1742,7 +1767,7 @@ Builds MUST be reproducible from a clean checkout using documented commands.
 
 ---
 
-# 37. package-lock.json
+# 38. package-lock.json
 
 When Node/npm dependencies are used, `package-lock.json` MUST be committed.
 
@@ -1764,7 +1789,7 @@ Do not manually modify `package-lock.json`.
 
 ---
 
-# 38. Build commands
+# 39. Build commands
 
 The repository SHOULD support at least:
 
@@ -1798,7 +1823,7 @@ SHOULD run the relevant static checks.
 
 ---
 
-# 39. Production repository and deployment model
+# 40. Production repository and deployment model
 
 The plugin is deployed from the Git repository by an updater mechanism. Production installations operated by RRZE obtain the plugin directly from the `main` branch.
 
@@ -1815,7 +1840,7 @@ The `main` branch is the deployable artifact.
 
 A fresh checkout of `main` into the WordPress plugins directory MUST be sufficient for WordPress to load and execute the plugin, assuming the documented WordPress/PHP/environment requirements are fulfilled.
 
-## 39.1 Files that belong in `main`
+## 40.1 Files that belong in `main`
 
 Files required for runtime operation MUST be committed.
 
@@ -1841,7 +1866,7 @@ Production CSS and JavaScript in `main` MUST follow the production asset rules d
 - no source maps;
 - deployable without an additional build step.
 
-## 39.2 Files that MUST NOT be committed
+## 40.2 Files that MUST NOT be committed
 
 Files and directories that are purely local, temporary, IDE-specific, operating-system-specific, generated only for development, or otherwise not part of the maintained repository MUST be excluded through `.gitignore`.
 
@@ -1873,7 +1898,7 @@ Development source files and build scripts MAY remain in the repository if they 
 
 > `main` must contain everything required to run the plugin, while local/temporary/IDE artifacts that do not belong to the maintained project must be excluded.
 
-## 39.3 Documentation
+## 40.3 Documentation
 
 If repository-local technical documentation is required, Markdown documentation SHOULD be placed below:
 
@@ -1897,7 +1922,7 @@ Where practical, linking to an authoritative maintained documentation URL is pre
 
 Documentation URLs MUST point to maintained, durable project documentation rather than ephemeral personal locations.
 
-## 39.4 `package.json` repository metadata
+## 40.4 `package.json` repository metadata
 
 `package.json` MUST contain repository metadata sufficient to identify the canonical source repository, issue tracker, and clone URL.
 
@@ -1916,7 +1941,7 @@ Recommended structure:
 
 The URLs MUST reference the actual canonical repository.
 
-## 39.5 `package.json` author metadata
+## 40.5 `package.json` author metadata
 
 Author information MUST be represented as structured metadata.
 
@@ -1935,7 +1960,7 @@ The actual project MUST use the responsible organization or maintainer informati
 
 Do not claim RRZE authorship for plugins that are not commissioned, accepted, or maintained by RRZE.
 
-## 39.6 `package.json` compatibility metadata
+## 40.6 `package.json` compatibility metadata
 
 The canonical compatibility metadata MUST be maintained in `package.json`.
 
@@ -1969,7 +1994,7 @@ Typical target locations include:
 - compatibility constants used by the plugin;
 - generated metadata where applicable.
 
-## 39.7 Central metadata synchronization script
+## 40.7 Central metadata synchronization script
 
 Version and compatibility metadata MUST NOT be maintained independently by hand in multiple files.
 
@@ -2036,11 +2061,11 @@ Because metadata synchronization modifies tracked files, it MUST normally be per
 
 The production updater MUST NOT modify versions or compatibility metadata after checkout.
 
-# 40. Version and compatibility synchronization
+# 41. Version and compatibility synchronization
 
 `package.json` is the canonical source for version and compatibility metadata.
 
-The synchronization script described in section 39 MUST ensure that all duplicated values are identical before promotion to `main`.
+The synchronization script described in section 40 MUST ensure that all duplicated values are identical before promotion to `main`.
 
 A production state MUST be rejected if, for example:
 
@@ -2069,7 +2094,7 @@ The same rule applies to:
 
 Manual editing of derived metadata SHOULD be avoided. Change canonical values in `package.json` and execute the synchronization script instead.
 
-# 41. Source maps
+# 42. Source maps
 
 Production source maps MUST be considered deliberately.
 
@@ -2079,7 +2104,7 @@ Never allow credentials to appear in source code regardless of source-map policy
 
 ---
 
-# 42. PHP dependencies
+# 43. PHP dependencies
 
 Third-party PHP libraries SHOULD be minimized.
 
@@ -2096,7 +2121,7 @@ Composer dependencies MUST be locked with `composer.lock` for applications/plugi
 
 ---
 
-# 43. JavaScript dependencies
+# 44. JavaScript dependencies
 
 Third-party frontend dependencies SHOULD be minimized.
 
@@ -2114,7 +2139,7 @@ Do not install large UI frameworks for trivial controls.
 
 ---
 
-# 43.1 Cookies and browser storage
+## 44.1 Cookies and browser storage
 
 If a plugin creates, reads, or modifies cookies, `localStorage`, or `sessionStorage`, this MUST be documented in `README.md`.
 
@@ -2164,7 +2189,7 @@ For `sessionStorage`, the README MUST document that storage is scoped to the bro
 
 Client-side storage MUST NOT contain secrets, authentication credentials, privileged API keys, or sensitive personal data unless a separate security/privacy review explicitly permits it.
 
-# 44. Privacy and data protection
+# 45. Privacy and data protection
 
 Plugins MUST document personal-data processing.
 
@@ -2184,7 +2209,7 @@ Transmit only what is required.
 
 ---
 
-# 45. Logging and diagnostics
+# 46. Logging and diagnostics
 
 Logging MUST be purposeful.
 
@@ -2232,7 +2257,7 @@ Centralize plugin logging where significant logging is required.
 ---
 
 
-# 45.1 Plugin-owned log files
+## 46.1 Plugin-owned log files
 
 The preferred operational logging mechanism on RRZE installations remains the `rrze-log` action interface.
 
@@ -2281,7 +2306,7 @@ The plugin MUST:
 - never log secrets or unnecessary personal data;
 - document retention and cleanup behavior where the plugin owns persistent logs.
 
-# 45.2 Plugin-owned upload directories
+## 46.2 Plugin-owned upload directories
 
 If a plugin stores uploaded media or files, these MUST be placed inside the WordPress uploads directory of the respective installation/site.
 
@@ -2342,7 +2367,7 @@ The README MUST document:
 - retention and deletion behavior;
 - Multisite behavior where relevant.
 
-# 46. Error handling
+# 47. Error handling
 
 External failures MUST not normally result in white screens or fatal errors.
 
@@ -2361,7 +2386,7 @@ Do not show stack traces, credentials, raw API responses, SQL, or internal files
 
 ---
 
-# 47. Performance
+# 48. Performance
 
 Plugins MUST be designed for large installations.
 
@@ -2384,7 +2409,7 @@ Background processing SHOULD use batches.
 
 ---
 
-# 48. Multisite scale
+# 49. Multisite scale
 
 Never assume that code acceptable for 5 sites is acceptable for 900 sites.
 
@@ -2412,7 +2437,7 @@ Use `try/finally` where it improves safety.
 
 ---
 
-# 49. Activation and migrations
+# 50. Activation and migrations
 
 Activation hooks MUST remain fast.
 
@@ -2428,7 +2453,7 @@ Do not assume every user installs only the newest version on a fresh site.
 
 ---
 
-# 50. Compatibility
+# 51. Compatibility
 
 The plugin MUST declare minimum supported versions.
 
@@ -2446,7 +2471,7 @@ Do not use WordPress APIs newer than the declared minimum WordPress version with
 
 ---
 
-# 51. Deprecated APIs
+# 52. Deprecated APIs
 
 Do not introduce deprecated WordPress APIs.
 
@@ -2456,7 +2481,7 @@ Do not perform unrelated large refactors merely to satisfy stylistic preferences
 
 ---
 
-# 52. Backwards compatibility
+# 53. Backwards compatibility
 
 Public hooks, stored option names, REST routes, block names, post types, taxonomies, and serialized data may form part of the plugin's compatibility surface.
 
@@ -2470,7 +2495,7 @@ If a breaking change is necessary:
 
 ---
 
-# 53. Testing
+# 54. Testing
 
 Every non-trivial feature SHOULD have an explicit test strategy.
 
@@ -2501,7 +2526,7 @@ At minimum, test:
 
 ---
 
-# 54. Accessibility testing
+# 55. Accessibility testing
 
 Automated accessibility tests are useful but insufficient.
 
@@ -2517,7 +2542,7 @@ Where UI is added or significantly modified, perform at least:
 
 Complex widgets SHOULD be manually tested with assistive technology when feasible.
 
-# 54.1 WordPress Plugin Check (PCP)
+## 55.1 WordPress Plugin Check (PCP)
 
 Before a plugin is considered ready for production, it MUST be tested with the official WordPress **Plugin Check** plugin (PCP).
 
@@ -2539,7 +2564,7 @@ The release checklist MUST record that Plugin Check was executed successfully.
 
 ---
 
-# 55. Code quality tools
+# 56. Code quality tools
 
 Recommended tools include, where appropriate:
 
@@ -2562,7 +2587,7 @@ If PHPCS is used, configure or selectively apply rules so that WordPress semanti
 
 ---
 
-# 56. Continuous Integration
+# 57. Continuous Integration
 
 Repositories SHOULD use CI.
 
@@ -2583,7 +2608,7 @@ A failed mandatory check MUST block release.
 
 ---
 
-# 57. Git workflow and deployment branches
+# 58. Git workflow and deployment branches
 
 Every plugin MUST be developed in a Git repository.
 
@@ -2631,7 +2656,7 @@ Do not mix mass formatting changes with functional changes.
 
 ---
 
-# 58. AI-assisted development rules
+# 59. AI-assisted development rules
 
 When an AI is asked to implement a task in this repository, it MUST follow this process:
 
@@ -2660,7 +2685,7 @@ The AI MUST explicitly state which checks were actually executed.
 
 ---
 
-# 59. AI prohibition against speculative implementation
+# 60. AI prohibition against speculative implementation
 
 If requirements are ambiguous, the AI MUST NOT silently invent business rules.
 
@@ -2685,7 +2710,7 @@ Where repository context already answers the question, inspect the repository in
 
 ---
 
-# 60. AI code review requirements
+# 61. AI code review requirements
 
 After implementation, the AI MUST review its own diff for:
 
@@ -2726,7 +2751,7 @@ The review MUST look for generated-code pathologies such as:
 
 ---
 
-# 61. Comments and documentation
+# 62. Comments and documentation
 
 Comments SHOULD explain why, constraints, side effects, or non-obvious behavior.
 
@@ -2752,7 +2777,7 @@ Do not generate paragraphs of boilerplate documentation for self-explanatory pri
 
 ---
 
-# 62. Maintainability
+# 63. Maintainability
 
 Optimize for the developer who must understand the code two years later.
 
@@ -2779,7 +2804,7 @@ A 30-line clear implementation is preferable to a 200-line abstraction generated
 
 ---
 
-# 63. Dependency on themes
+# 64. Dependency on themes
 
 Plugins MUST NOT depend on a specific theme unless the plugin's purpose explicitly requires it.
 
@@ -2791,7 +2816,7 @@ Do not hard-code FAU theme DOM structures unless explicitly required and documen
 
 ---
 
-# 64. Content ownership
+# 65. Content ownership
 
 A plugin MUST not silently rewrite editorial content merely to make its internal state simpler.
 
@@ -2807,7 +2832,7 @@ Technically detectable differences MUST NOT automatically be interpreted as edit
 
 ---
 
-# 65. Blocks vs custom UI vs content
+# 66. Blocks vs custom UI vs content
 
 Before implementing a new UI feature, determine whether the requirement is already satisfied by:
 
@@ -2824,7 +2849,7 @@ Do not create a plugin feature for something editors can already express reliabl
 
 ---
 
-# 66. API abstraction
+# 67. API abstraction
 
 Third-party APIs SHOULD be isolated behind a client/service class.
 
@@ -2848,7 +2873,7 @@ This makes it possible to:
 
 ---
 
-# 67. Feature flags
+# 68. Feature flags
 
 Experimental or infrastructure-dependent functionality SHOULD use explicit feature flags.
 
@@ -2860,7 +2885,7 @@ Do not implement hidden behavior based on arbitrary URL parameters or undocument
 
 ---
 
-# 68. Admin notices
+# 69. Admin notices
 
 Admin notices MUST be actionable and shown only to users who can act on them.
 
@@ -2874,7 +2899,7 @@ Use site admin notices for site-owned problems.
 
 ---
 
-# 69. Capability model
+# 70. Capability model
 
 Capabilities MUST model operations, not job titles. Advanced functionality MUST be exposed only to users with the required capability. On Multisite, network-owned configuration MUST be restricted to Network Admin/Super Admin authority; significant site-owned configuration MUST be restricted to Site Admin authority. Hiding a control is not authorization; privileged reads and writes MUST be protected server-side.
 
@@ -2892,7 +2917,7 @@ Custom capabilities MAY be introduced if the plugin needs finer-grained authoriz
 
 ---
 
-# 70. Output and HTML
+# 71. Output and HTML
 
 Prefer semantic HTML.
 
@@ -2908,7 +2933,7 @@ HTML intended to allow formatting MUST use a defined allowlist, for example with
 
 ---
 
-# 70.1 Structured data and Schema.org
+## 71.1 Structured data and Schema.org
 
 Whenever a plugin outputs domain-specific information, the developer MUST determine whether Schema.org defines a suitable vocabulary/type for that information.
 
@@ -2952,7 +2977,7 @@ Microdata markup MUST preserve valid, accessible HTML.
 If no appropriate Schema.org definition exists, no artificial structured-data mapping is required.
 
 
-# 70.2 Output scoping and CSS namespace
+## 71.2 Output scoping and CSS namespace
 
 Every plugin-generated frontend or backend output MUST be wrapped in a container whose CSS class corresponds to the plugin slug.
 
@@ -2991,7 +3016,7 @@ This requirement applies to:
 - block frontend output where a plugin-controlled wrapper exists;
 - dynamically rendered plugin UI.
 
-## CSS scoping requirement
+### CSS scoping requirement
 
 Plugin CSS MUST assume this plugin-slug wrapper hierarchically.
 
@@ -3035,7 +3060,7 @@ This rule exists to prevent style collisions in large WordPress installations wi
 
 Even when using highly specific internal class names, the plugin-slug wrapper SHOULD remain the outer CSS namespace.
 
-# 71. Forms
+# 72. Forms
 
 Forms MUST:
 
@@ -3053,7 +3078,7 @@ Placeholders MUST NOT be the only form labels.
 
 ---
 
-# 72. JavaScript enhancement
+# 73. JavaScript enhancement
 
 Prefer progressive enhancement where reasonable.
 
@@ -3067,7 +3092,7 @@ Prefer TypeScript for complex tasks.
 
 ---
 
-# 73. AJAX
+# 74. AJAX
 
 Prefer REST API for new structured endpoints unless WordPress admin-ajax provides a simpler justified fit.
 
@@ -3084,7 +3109,7 @@ Avoid exposing unauthenticated `wp_ajax_nopriv_*` actions without deliberate sec
 
 ---
 
-# 74. File handling
+# 75. File handling
 
 File uploads MUST use WordPress APIs where possible.
 
@@ -3106,7 +3131,7 @@ Do not execute uploaded files.
 
 ---
 
-# 75. URL handling
+# 76. URL handling
 
 Use WordPress URL helpers.
 
@@ -3127,7 +3152,7 @@ For external URLs, validate allowed schemes and domains where appropriate.
 
 ---
 
-# 76. Dates and time
+# 77. Dates and time
 
 Use WordPress timezone-aware APIs for user-visible/local site time.
 
@@ -3139,7 +3164,7 @@ Avoid mixing Unix timestamps, MySQL local time, and browser-local time without e
 
 ---
 
-# 77. Serialization and structured data
+# 78. Serialization and structured data
 
 Prefer arrays or JSON-compatible structures.
 
@@ -3153,7 +3178,7 @@ Schema changes to stored arrays MUST remain backwards-compatible or be migrated.
 
 ---
 
-# 78. Feature lifecycle
+# 79. Feature lifecycle
 
 Every feature SHOULD have an owner.
 
@@ -3171,7 +3196,7 @@ A one-time AI-generated code contribution without a maintenance owner is not suf
 
 ---
 
-# 79. Definition of Done
+# 80. Definition of Done
 
 A feature is complete only when all applicable items are satisfied.
 
@@ -3235,7 +3260,7 @@ A feature is complete only when all applicable items are satisfied.
 - [ ] Forms have labels and usable errors.
 - [ ] Semantic HTML is used.
 - [ ] WCAG 2.2 AA implications were reviewed.
-- [ ] Form input workflows were reviewed against WCAG 2.2 AAA.
+- [ ] Form input workflows were reviewed against WCAG 2.2 AAA where reasonable and technically practical.
 
 ## Multisite
 
@@ -3289,7 +3314,7 @@ A feature is complete only when all applicable items are satisfied.
 
 ---
 
-# 80. Initial AI prompt for creating a new plugin
+# 81. Initial AI prompt for creating a new plugin
 
 The following section can be copied as the immediate task prompt after this document has been provided to an AI system.
 
@@ -3375,7 +3400,7 @@ A production-ready result must be maintainable, testable, accessible, secure, do
 
 ---
 
-# 81. Project initialization checklist
+# 82. Project initialization checklist
 
 When creating a completely new plugin, initialize these values explicitly:
 
@@ -3417,7 +3442,7 @@ Do not begin implementation until these values are either known or safely deriva
 
 ---
 
-# 82. Recommended default RRZE baseline
+# 83. Recommended default RRZE baseline
 
 Unless a project explicitly specifies otherwise, use the following conceptual defaults:
 
@@ -3436,7 +3461,7 @@ Asset/metadata-only build tooling: project-local Node.js scripts using esbuild a
 Source assets: src/
 Generated assets: build/
 Translations: languages/
-Accessibility target: WCAG 2.2 AA generally; WCAG 2.2 AAA for form input workflows
+Accessibility target: WCAG 2.2 AA generally; WCAG 2.2 AAA desired for form input workflows where reasonable and technically practical
 Development branch: dev
 Production branch: main, directly executable
 RRZE production source: Git updater against main
@@ -3480,7 +3505,7 @@ Production owner: mandatory
 
 ---
 
-# 82.1 Reference implementations
+## 83.1 Reference implementations
 
 When architectural examples are needed, inspect current maintained RRZE plugins before inventing a new project structure.
 
@@ -3515,7 +3540,7 @@ https://github.com/RRZE-Webteam/rrze-settings/
 ```
 
 
-# 83. Final architectural rule
+# 84. Final architectural rule
 
 The goal of this standard is not maximum abstraction and not maximum code generation.
 
