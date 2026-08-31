@@ -1,6 +1,6 @@
 # RRZE WordPress Development Environment - LLM Installation Specification
 
-( Version: 1.0,  Date: 25.08.2026 )
+( Version: 1.0,  Date: 25.08.2026,  Source: https://github.com/RRZE-Webteam/SPEC/RRZE-WordPress-Entwicklungsumgebung-LLM-Shortcut.md )
 
 Audience: LLMs and automation agents that create, configure, or verify a local WordPress development environment.
 

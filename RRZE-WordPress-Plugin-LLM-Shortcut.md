@@ -1,6 +1,6 @@
 # RRZE WordPress Plugin Engineering Standard: LLM Compact Baseline
 
-( Version: 1.18,  Date: 31.08.2026 )
+( Version: 1.18,  Date: 31.08.2026,  Source: https://github.com/RRZE-Webteam/SPEC/RRZE-WordPress-Plugin-LLM-Shortcut.md )
 
 Status: Mandatory companion prompt for AI-assisted WordPress plugin work in the CMS offerings of RRZE
 

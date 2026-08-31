@@ -1,6 +1,6 @@
 # Testprompts für WordPress-Plugin-Audits
 
-( Version: 1.1,  Date: 31.08.2026 )
+( Version: 1.1,  Date: 31.08.2026,  Source: https://github.com/RRZE-Webteam/SPEC/RRZE-WordPress-Plugin-Testprompts.md )
 
 Diese Prompts dienen zur Prüfung bestehender oder von Dritten gelieferter WordPress-Plugins gegen den jeweils aktuellen **RRZE WordPress Plugin Engineering Standard**. Der Standard muss dem prüfenden System als Datei oder eindeutig referenzierte Ressource vorliegen.
 

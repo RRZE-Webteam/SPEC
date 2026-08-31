@@ -1,6 +1,6 @@
 # RRZE WordPress Plugin Engineering Standard and AI Development Prompt
 
-( Version: 1.18,  Date: 31.08.2026 )
+( Version: 1.18,  Date: 31.08.2026,  Source: https://github.com/RRZE-Webteam/SPEC/RRZE-WordPress-Plugin.md )
 
 > **Purpose:** This document defines the mandatory baseline for creating, extending, reviewing, and maintaining WordPress plugins intended for operation in RRZE/FAU environments.
 >

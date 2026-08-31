@@ -1,6 +1,6 @@
 # FAU Crawler User-Agent Specification --- LLM/Agent Project Rules
 
-( Version: 1.5,  Date: 31.08.2026 )
+( Version: 1.5,  Date: 31.08.2026,  Source: https://github.com/RRZE-Webteam/SPEC/RRZE-Crawler-Rules-LLM-Shortcut.md )
 
 **Scope:** All software that performs automated HTTP retrieval or
 crawling on behalf of an FAU organizational unit, project or service.
