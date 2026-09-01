@@ -1,6 +1,6 @@
 # RRZE WordPress Plugin Engineering Standard and AI Development Prompt
 
-( Version: 1.18,  Date: 31.08.2026,  Source: https://github.com/RRZE-Webteam/SPEC/RRZE-WordPress-Plugin.md )
+( Version: 1.19,  Date: 01.09.2026,  Source: https://github.com/RRZE-Webteam/SPEC/RRZE-WordPress-Plugin.md )
 
 > **Purpose:** This document defines the mandatory baseline for creating, extending, reviewing, and maintaining WordPress plugins intended for operation in RRZE/FAU environments.
 >
@@ -40,21 +40,15 @@ Do not duplicate existing functionality without an explicit architectural reason
 
 ## 1.1 Binding rules for admission to the RRZE CMS
 
-For plugins intended to be operated on or admitted to the central FAU/RRZE CMS, the current rules published by RRZE are binding:
+For plugins intended to be operated on or admitted to the central FAU/RRZE CMS, this SPEC repository is the canonical source for admission and engineering rules.
+
+The RRZE WordPress development pages remain a useful public entry point for documentation, explanations, and related information:
 
 ```text
-https://www.wp.rrze.fau.de/entwicklung/einsatz-fremdplugins/vorgaben-an-plugins/
+https://www.wp.rrze.fau.de/entwicklung/
 ```
 
-These operational rules apply in addition to this engineering standard.
-
-For WordPress blocks, the current additional rules published by RRZE are also binding:
-
-```text
-https://www.wp.rrze.fau.de/entwicklung/einsatz-fremdplugins/vorgaben-an-bloecke/
-```
-
-If the published FAU/RRZE CMS admission rules are updated, the current published version MUST be considered during development, review, and release.
+If documentation pages and this SPEC repository conflict, this SPEC repository wins.
 
 In particular:
 

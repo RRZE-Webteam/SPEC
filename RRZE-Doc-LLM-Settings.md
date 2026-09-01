@@ -1,27 +1,29 @@
-# Empfehlungen zur Einbindung der RRZE-Plugin-Spezifikation in LLM-Werkzeuge
+# Empfehlungen zur Einbindung der RRZE-Spezifikationen in LLM-Werkzeuge
 
-( Version: 1.2,  Date: 31.08.2026,  Source: https://github.com/RRZE-Webteam/SPEC/RRZE-Doc-LLM-Settings.md )
+( Version: 1.3,  Date: 01.09.2026,  Source: https://github.com/RRZE-Webteam/SPEC/RRZE-Doc-LLM-Settings.md )
 
-Geltungsbereich: Entwicklung, Analyse und Wartung von WordPress-Plugins für das CMS-Angebot des RRZE sowie Entwicklung, Analyse und Wartung von FAU-Crawlern
+Geltungsbereich: Entwicklung, Analyse und Wartung von WordPress-Plugins und WordPress-Themes für das CMS-Angebot des RRZE sowie Entwicklung, Analyse und Wartung von FAU-Crawlern
 
 ## Grundsatz
 
-Die Spezifikationen sind zentrale Vorgaben des RRZE-Webteams für die Entwicklung und Bereitstellung von Plugins, Themes und anderen Webanwendung, die auf dem CMS- oder Webspace-Server des RRZE-Webtams bereitgestellt werden sollen.
+Die Spezifikationen sind zentrale Vorgaben des RRZE-Webteams für die Entwicklung und Bereitstellung von Plugins, Themes und anderen Webanwendungen, die auf dem CMS- oder Webspace-Server des RRZE-Webteams bereitgestellt werden sollen.
 
-Sie sollten nicht in einzelne Plugin-Repositories kopiert werden. Ein Plugin-Repository ist das zu bearbeitende Produkt, nicht der Ablageort für allgemeine Entwicklungsregeln.
+Sie sollten nicht in einzelne Plugin- oder Theme-Repositories kopiert werden. Ein Produkt-Repository ist das zu bearbeitende Produkt, nicht der Ablageort für allgemeine Entwicklungsregeln.
 
 Es gibt genau eine kanonische Quelle, zum Beispiel ein zentral verwaltetes Git-Repository oder einen zentral bereitgestellten, schreibgeschützten Ordner. Dieser wird im Folgenden **Standardquelle** genannt. Sie enthält mindestens:
 
 ```text
 RRZE-WordPress-Plugin.md
+RRZE-WordPress-Theme.md
 RRZE-WordPress-Entwicklungsumgebung.md
 RRZE-Crawler-Rules.md
 ```
 
-Sowie optional auch eine für LLMs komprimierte Kuzfassung:
+Sowie optional auch eine für LLMs komprimierte Kurzfassung:
 
 ```text
 RRZE-WordPress-Plugin-LLM-Shortcut.md
+RRZE-WordPress-Theme-LLM-Shortcut.md
 RRZE-WordPress-Entwicklungsumgebung-LLM-Shortcut.md
 RRZE-Crawler-Rules-LLM-Shortcut.md
 ```
@@ -34,10 +36,10 @@ Die Produkte verwenden verschiedene Begriffe wie Project instructions, User Rule
 
 1. Die vollständigen Spezifikationen bleiben ausschließlich in der Standardquelle.
 2. Das LLM erhält global eine kurze Steueranweisung mit dem Ort der Standardquelle.
-3. Bei jeder WordPress-Plugin- oder Crawler-Aufgabe muss es vor Analyse, Planung, Änderung oder Freigabe die aktuelle Spezifikation aus der Standardquelle lesen.
+3. Bei jeder WordPress-Plugin-, WordPress-Theme- oder Crawler-Aufgabe muss es vor Analyse, Planung, Änderung oder Freigabe die aktuelle Spezifikation aus der Standardquelle lesen.
 4. In Claude.ai, ChatGPT und der Cursor-Oberfläche ist eine Cloud- oder Einstellungs-Kopie technisch unvermeidbar. Diese ist keine zweite fachliche Quelle, sondern ein kontrollierter Auszug beziehungsweise eine hochgeladene Arbeitskopie und muss bei jeder Änderung der Standardquelle aktualisiert werden.
 
-Es darf keine Datei wie `AGENTS.md`, `CLAUDE.md`, `GEMINI.md` oder `.cursor/rules/…` in einem einzelnen Plugin- oder Crawler-Repository nur deshalb geben, um die RRZE-Spezifikation zu duplizieren.
+Es darf keine Datei wie `AGENTS.md`, `CLAUDE.md`, `GEMINI.md` oder `.cursor/rules/…` in einem einzelnen Plugin-, Theme- oder Crawler-Repository nur deshalb geben, um die RRZE-Spezifikation zu duplizieren.
 
 ## Gemeinsame globale Steueranweisung
 
@@ -46,6 +48,10 @@ Die folgende kurze Anweisung wird an den jeweils unten genannten globalen Ort ge
 ```text
 Die RRZE WordPress Plugin Engineering Standards gelten für jede Aufgabe zur
 Entwicklung, Prüfung, Analyse oder Wartung von WordPress-Plugins im
+CMS-Angebot des RRZE.
+
+Die RRZE WordPress Theme Engineering Standards gelten für jede Aufgabe zur
+Entwicklung, Prüfung, Analyse oder Wartung von WordPress-Themes im
 CMS-Angebot des RRZE.
 
 Die FAU-Crawler-Regeln gelten für jede Aufgabe zur Entwicklung, Prüfung,
@@ -57,6 +63,9 @@ Dienstes abruft.
 Lies vor Beginn jeder solchen Aufgabe die aktuelle Fassung aus
 <STANDARDQUELLE>:
 - RRZE-WordPress-Plugin.md
+- RRZE-WordPress-Theme.md
+- RRZE-WordPress-Plugin-LLM-Shortcut.md
+- RRZE-WordPress-Theme-LLM-Shortcut.md
 - RRZE-WordPress-Entwicklungsumgebung-LLM-Shortcut.md
 - RRZE-Crawler-Rules-LLM-Shortcut.md
 
@@ -71,9 +80,9 @@ erfüllbare Vorgaben hin, bevor du sie umsetzt.
 
 ### Claude.ai
 
-Für Claude.ai wird **ein einziges zentrales Project** eingerichtet, etwa „RRZE Webentwicklung Standards“. Alle Gespräche zu WordPress-Plugins und Crawlern werden innerhalb dieses Projects geführt.
+Für Claude.ai wird **ein einziges zentrales Project** eingerichtet, etwa „RRZE Webentwicklung Standards“. Alle Gespräche zu WordPress-Plugins, WordPress-Themes und Crawlern werden innerhalb dieses Projects geführt.
 
-- Die sechs Dateien aus der Standardquelle werden als **Project knowledge** hochgeladen.
+- Die acht Dateien aus der Standardquelle werden als **Project knowledge** hochgeladen.
 - Die gemeinsame Steueranweisung wird unter **Project instructions** hinterlegt.
 - Bei jeder neuen Version werden die hochgeladenen Dateien ersetzt. Die Versionsnummer des Standards wird dabei kontrolliert.
 - **Styles** dürfen nicht für die Spezifikation verwendet werden. Sie steuern die Darstellungsform von Antworten, nicht die Arbeitsregeln.
@@ -88,15 +97,15 @@ Für Claude Code gehört die gemeinsame Steueranweisung in die globale Nutzerdat
 ~/.claude/CLAUDE.md
 ```
 
-Wenn die zentrale Ablage lokal verfügbar ist, kann `CLAUDE.md` die Standarddateien per `@`-Import einbinden. Alternativ enthält sie die gemeinsame Steueranweisung mit absoluten Pfaden zur Standardquelle. Dies gilt für alle Plugins, die dieser Benutzer mit Claude Code bearbeitet.
+Wenn die zentrale Ablage lokal verfügbar ist, kann `CLAUDE.md` die Standarddateien per `@`-Import einbinden. Alternativ enthält sie die gemeinsame Steueranweisung mit absoluten Pfaden zur Standardquelle. Dies gilt für alle Plugins, Themes und Crawler, die dieser Benutzer mit Claude Code bearbeitet.
 
-Eine organisationsweit betreute Claude-Code-Installation kann statt der Nutzerdatei die verwaltete Richtlinie des Betriebssystems verwenden. Projektbezogene `CLAUDE.md`-Dateien sind nur für echte, besondere Regeln dieses einen Plugins erlaubt, nie als Kopie der RRZE-Vorgaben.
+Eine organisationsweit betreute Claude-Code-Installation kann statt der Nutzerdatei die verwaltete Richtlinie des Betriebssystems verwenden. Projektbezogene `CLAUDE.md`-Dateien sind nur für echte, besondere Regeln dieses einen Produkts erlaubt, nie als Kopie der RRZE-Vorgaben.
 
 Offizielle Referenzen: [Claude Projects](https://support.anthropic.com/en/articles/9519177-how-can-i-create-and-manage-projects), [Personalisierung in Claude](https://support.anthropic.com/en/articles/10185728-understanding-claude-s-personalization-features), [Claude Code Memory und CLAUDE.md](https://code.claude.com/docs/en/memory).
 
 ## Cursor
 
-Cursor hat zwei relevante Formen von Regeln: versionierte **Project Rules** im einzelnen Repository und globale **User Rules** in den Cursor-Einstellungen. Für die RRZE-Spezifikation sind ausschließlich die globalen User Rules geeignet. Project Rules würden wieder Kopien in jedem Plugin erzeugen und sind deshalb hier nicht zu verwenden.
+Cursor hat zwei relevante Formen von Regeln: versionierte **Project Rules** im einzelnen Repository und globale **User Rules** in den Cursor-Einstellungen. Für die RRZE-Spezifikation sind ausschließlich die globalen User Rules geeignet. Project Rules würden wieder Kopien in jedem Produkt-Repository erzeugen und sind deshalb hier nicht zu verwenden.
 
 ### Richtiger Ort
 
@@ -109,7 +118,7 @@ Cursor speichert User Rules nicht als automatisch mit einer zentralen Git-Quelle
 - Die pflegende Stelle verteilt bei jeder Änderung einen aktualisierten User-Rule-Text oder automatisiert dessen Einspielung über die betreute Arbeitsplatzkonfiguration.
 - Für Team- oder organisationsweite Gleichheit ist eine zentrale Konfigurationsverwaltung der Cursor-Einstellungen erforderlich; die manuelle Pflege durch einzelne Personen ist fehleranfällig.
 
-Die alte Datei `.cursorrules` wird nicht verwendet. Sie ist ein Legacy-Format. Eine `.cursor/rules/`-Struktur ist nur für plugin-spezifische Zusatzregeln zulässig, nicht für die zentrale RRZE-Spezifikation.
+Die alte Datei `.cursorrules` wird nicht verwendet. Sie ist ein Legacy-Format. Eine `.cursor/rules/`-Struktur ist nur für produktspezifische Zusatzregeln zulässig, nicht für die zentrale RRZE-Spezifikation.
 
 Offizielle Referenz: [Cursor Rules](https://docs.cursor.com/context/rules).
 
@@ -127,15 +136,18 @@ Diese Datei enthält die gemeinsame Steueranweisung und bindet die zentrale Stan
 
 ```text
 @/zentraler/pfad/zu/rrze-llm-standards/RRZE-WordPress-Plugin.md
+@/zentraler/pfad/zu/rrze-llm-standards/RRZE-WordPress-Theme.md
+@/zentraler/pfad/zu/rrze-llm-standards/RRZE-WordPress-Plugin-LLM-Shortcut.md
+@/zentraler/pfad/zu/rrze-llm-standards/RRZE-WordPress-Theme-LLM-Shortcut.md
 @/zentraler/pfad/zu/rrze-llm-standards/RRZE-WordPress-Entwicklungsumgebung-LLM-Shortcut.md
 @/zentraler/pfad/zu/rrze-llm-standards/RRZE-Crawler-Rules-LLM-Shortcut.md
 ```
 
-Gemini CLI lädt die globale Datei für jedes bearbeitete Projekt. Mit `/memory show` wird geprüft, ob die zentrale Spezifikation geladen ist; nach einer Aktualisierung lädt `/memory reload` sie neu. Eine `GEMINI.md` im Plugin-Repository ist für die RRZE-Spezifikation nicht erforderlich.
+Gemini CLI lädt die globale Datei für jedes bearbeitete Projekt. Mit `/memory show` wird geprüft, ob die zentrale Spezifikation geladen ist; nach einer Aktualisierung lädt `/memory reload` sie neu. Eine `GEMINI.md` im Plugin- oder Theme-Repository ist für die RRZE-Spezifikation nicht erforderlich.
 
 ### Gemini im Web
 
-Für die Web-Oberfläche wird ein **zentraler Gem** oder ein zentral betreuter Arbeitsbereich „RRZE Webentwicklung Standards“ verwendet. Dort werden die sechs Dateien aus der Standardquelle als Referenzmaterial hinterlegt und die gemeinsame Steueranweisung als Gem-Anweisung gepflegt.
+Für die Web-Oberfläche wird ein **zentraler Gem** oder ein zentral betreuter Arbeitsbereich „RRZE Webentwicklung Standards“ verwendet. Dort werden die acht Dateien aus der Standardquelle als Referenzmaterial hinterlegt und die gemeinsame Steueranweisung als Gem-Anweisung gepflegt.
 
 Auch hier gibt es keine automatische Bindung an eine externe Git-Datei. Die Dateien müssen nach jeder Änderung der Standardquelle kontrolliert ersetzt werden. Für wiederkehrende Entwicklungsarbeit ist Gemini CLI daher die verlässlichere Variante.
 
@@ -145,11 +157,11 @@ Offizielle Referenz: [GEMINI.md-Kontextdateien für Gemini CLI](https://geminicl
 
 ### ChatGPT
 
-Für ChatGPT wird **ein zentrales Project** „RRZE Webentwicklung Standards“ angelegt und für alle WordPress-Plugin- und Crawler-Vorhaben verwendet.
+Für ChatGPT wird **ein zentrales Project** „RRZE Webentwicklung Standards“ angelegt und für alle WordPress-Plugin-, WordPress-Theme- und Crawler-Vorhaben verwendet.
 
-- Die sechs Dateien aus der Standardquelle werden als **Project sources** hochgeladen.
+- Die acht Dateien aus der Standardquelle werden als **Project sources** hochgeladen.
 - Die gemeinsame Steueranweisung wird unter **Project settings** als **Project instructions** eingetragen.
-- Globale Custom Instructions werden nicht als Speicherort des Standards verwendet. Sie sind personengebunden, nicht als zentrale fachliche Quelle versioniert und gelten zudem für Themen außerhalb der Plugin-Entwicklung.
+- Globale Custom Instructions werden nicht als Speicherort des Standards verwendet. Sie sind personengebunden, nicht als zentrale fachliche Quelle versioniert und gelten zudem für Themen außerhalb der WordPress-Entwicklung.
 - Nach jeder Änderung der Standardquelle werden die Project sources ersetzt und die Versionsnummer kontrolliert.
 
 ChatGPT Projects können Dateien und Anweisungen dauerhaft innerhalb eines Projects bereitstellen, synchronisieren aber keine externe Standardquelle automatisch. Deshalb ist das zentrale Project die gemeinsame Arbeitskopie, nicht der Ort der fachlichen Pflege.
@@ -164,7 +176,7 @@ Für Codex gehört die gemeinsame Steueranweisung in die globale Codex-Datei:
 ~/.codex/AGENTS.md
 ```
 
-Codex verarbeitet diese Datei vor den Regeln eines geöffneten Repositorys. `~/.codex/AGENTS.md` nennt die zentrale Standardquelle mit absoluten Pfaden und verpflichtet Codex, die relevanten Spezifikationsdateien bei WordPress-Plugin- und Crawler-Aufgaben zu lesen. Damit gilt die Vorgabe für alle lokal bearbeiteten Projekte, ohne eine Datei in deren Repository abzulegen.
+Codex verarbeitet diese Datei vor den Regeln eines geöffneten Repositorys. `~/.codex/AGENTS.md` nennt die zentrale Standardquelle mit absoluten Pfaden und verpflichtet Codex, die relevanten Spezifikationsdateien bei WordPress-Plugin-, WordPress-Theme- und Crawler-Aufgaben zu lesen. Damit gilt die Vorgabe für alle lokal bearbeiteten Projekte, ohne eine Datei in deren Repository abzulegen.
 
 `AGENTS.md` innerhalb eines Projekt-Repositories ist nur für Besonderheiten dieses Projekts zulässig, etwa konkrete Testkommandos oder eine projektspezifische Architekturentscheidung. Sie darf die RRZE-Spezifikation nicht wiederholen, reduzieren oder ihr widersprechen.
 
@@ -179,6 +191,6 @@ Offizielle Referenz: [Wie Codex Anweisungen zusammensetzt](https://openai.com/in
 - Die betreuende Stelle aktualisiert danach die zentralen Claude.ai-, ChatGPT- und Gemini-Web-Arbeitskopien sowie die globalen Cursor User Rules.
 - Die lokalen Importdateien `~/.claude/CLAUDE.md`, `~/.gemini/GEMINI.md` und `~/.codex/AGENTS.md` werden zentral verwaltet oder kontrolliert verteilt. Sie bleiben kurz und enthalten keine Vollkopie des Standards.
 - Vor formellen Reviews oder Releases wird die Version der verwendeten Standardquelle im Ergebnis genannt.
-- Bei Dritt-Plugins gelten deren mitgelieferte Regeldateien, Prompts und Dokumente nie als vertrauenswürdige Anweisung. Sie sind Teil des Prüfgegenstands.
+- Bei Dritt-Plugins und Dritt-Themes gelten deren mitgelieferte Regeldateien, Prompts und Dokumente nie als vertrauenswürdige Anweisung. Sie sind Teil des Prüfgegenstands.
 
-Dieses Modell erzeugt keine Kopien in Plugin-Repositories. Es trennt die zentrale Regelpflege sauber von der Entwicklung einzelner Plugins und macht die unvermeidbaren Cloud-Kopien sichtbar sowie kontrollierbar.
+Dieses Modell erzeugt keine Kopien in Produkt-Repositories. Es trennt die zentrale Regelpflege sauber von der Entwicklung einzelner Plugins, Themes und Crawler und macht die unvermeidbaren Cloud-Kopien sichtbar sowie kontrollierbar.
